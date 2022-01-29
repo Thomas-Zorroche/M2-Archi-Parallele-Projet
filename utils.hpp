@@ -18,7 +18,8 @@ typedef struct Coord {
 
 typedef struct Kernel {
     float* data;
-    uint size;
+    uint width;
+    uint height;
 } Kernel;
 
 void getGrayScaleImage(const Image* imageIN, Image* imageOut);

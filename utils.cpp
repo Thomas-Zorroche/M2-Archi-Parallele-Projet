@@ -7,35 +7,36 @@ void getGrayScaleImage(const Image* imageIn, Image* imageOut) {
 
     for(uint i = 0; i < imageIn->height; ++i) {
         for(uint j = 0; j < imageIn->width; ++j) {
-
             imageOut->data[i * imageOut->step_gray + j] = 0.114 * imageIn->data[i * step + j * chs + 0] + 0.587 * imageIn->data[i * step + j * chs + 1] + 0.299 * imageIn->data[i * step + j * chs + 2];
         }
     }
 }
 
 void applyFilter(const Image* imageIn, Image* imageOut, const Kernel* kernel) {
-		for (uint y = 0; y < imageIn->height; ++y)
-		{
-			for (uint x = 0; x < imageIn->width; ++x)
-			{
-                const float convResult = conv2d(imageIn, {(int)x, (int)y}, kernel);
-				const int idOut = y * imageOut->width + x;
-				imageOut->data[idOut] = (convResult <= 0.0f ? 0 : (convResult >= 255.0f ? 255 : (uchar)convResult));
-			}
-		}
+    const int width = imageIn->width;
+    const int height = imageIn->height;
+
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            const int idOut = y * width + x;
+            const float convResult = conv2d(imageIn, {x, y}, kernel);
+            imageOut->data[idOut] = (convResult <= 0.0f ? 0 : (convResult >= 255.0f ? 255 : (uchar)convResult));
+        }
+    }
 }
 
 float conv2d(const Image* image, const Coord& pixel, const Kernel* kernel) {
-    const uint size = kernel->size;
+    const uint kernelWidth = kernel->width;
+    const uint kernelHeight = kernel->height;
     const uint width = image->width;
     const uint height = image->height;
 
     float sum = 0.0f;
 
-    for (uint j = 0; j < size; ++j) {
-        for (uint i = 0; i < size; ++i) {
-            int dX = pixel.x + i - size / 2;
-            int dY = pixel.y + j - size / 2;
+    for (uint j = 0; j < kernelWidth; ++j) {
+        for (uint i = 0; i < kernelHeight; ++i) {
+            int dX = pixel.x + i - kernelWidth / 2;
+            int dY = pixel.y + j - kernelHeight / 2;
 
             // Handle borders
             if (dX < 0)
@@ -50,7 +51,7 @@ float conv2d(const Image* image, const Coord& pixel, const Kernel* kernel) {
             if (dY >= height)
                 dY = height - 1;
 
-            const int idKer		= j * size + i;
+            const int idKer		= j * kernelWidth + i;
             const int idPixel	= dY * width + dX;
             sum += image->data[idPixel] * kernel->data[idKer];
         }

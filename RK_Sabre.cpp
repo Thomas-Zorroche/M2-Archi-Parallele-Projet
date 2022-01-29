@@ -89,8 +89,11 @@ int main(int argc, char* argv[])
 	Image inputImage 	= {nullptr, (uint)Image_IN->height, (uint)Image_IN->width, Image_IN->nChannels, Image_IN->widthStep, step_gray};
 	Image outputImage 	= {nullptr, (uint)Image_OUT->height, (uint)Image_OUT->width, Image_OUT->nChannels, Image_OUT->widthStep, step_gray};
 
-	float data[] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
-	const Kernel sobelX = {data, 3};
+	// Filtres
+	float dataSobelX[] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
+	const Kernel sobelX = {dataSobelX, 3, 3};
+	float dataSobelY[] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
+	const Kernel sobelY = {dataSobelY, 3, 3};
 
 	// Boucle tant que l'utilisateur n'appuie pas sur la touche q (ou Q)
     while(ESC_keyboard != 'q' && ESC_keyboard != 'Q') {
