@@ -19,6 +19,7 @@
  * IGM_M2_Image
  */
  
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -28,9 +29,25 @@
 
 #include "utils.hpp"
 
+int main(int argc, char* argv[])
+{
+	// Récupérer le numéro de caméra entré par l'utilisateur en paramètre
+	uint choosenCamera = 0;
+	int opt;
+	while((opt = getopt(argc, argv, "c:")) != -1) {
+		switch (opt) {
+			case 'c':
+				choosenCamera = atoi(optarg);
+				break;
+			
+			default:
+				printf("Usage: program -c <id of camera (uint)>\n");
+				exit(EXIT_FAILURE);
+				break;
+		}
+	}
+	printf("Camera id: %d\n", choosenCamera);
 
-int main()
-{ 
 	// Touche clavier pour quitter
 	char ESC_keyboard;
 	// Intialisation de la variable ESC_keyboard
@@ -43,15 +60,10 @@ int main()
 	// Capture vidéo
 	CvCapture *capture;
 
-	// Variables images
-	CaptureInfo info;	// Informations sur la capture (taille, steps ...)	
-	uchar *Data_in;		// Pointeur des données Image_IN
-	uchar *Data_out;	// Pointeur des données Image_OUT
-
 	// Ouvrir le flux vidéo
 	// capture = cvCreateFileCapture("/path/to/your/video/test.avi"); // chemin pour un fichier
 	// capture = cvCreateCameraCapture(CV_CAP_ANY);
-	capture = cvCreateCameraCapture( 2 );
+	capture = cvCreateCameraCapture(choosenCamera);
 
 	// Vérifier si l'ouverture du flux est ok
 	if (!capture) {
@@ -74,7 +86,11 @@ int main()
 	Image_OUT = cvCreateImage(cvSize(Image_IN->width,Image_IN->height),  IPL_DEPTH_8U, 1); 	
 	int step_gray = Image_OUT->widthStep/sizeof(uchar);
 
-	info = {Image_IN->height, Image_IN->width, Image_IN->nChannels, Image_IN->widthStep, step_gray};
+	Image inputImage 	= {nullptr, (uint)Image_IN->height, (uint)Image_IN->width, Image_IN->nChannels, Image_IN->widthStep, step_gray};
+	Image outputImage 	= {nullptr, (uint)Image_OUT->height, (uint)Image_OUT->width, Image_OUT->nChannels, Image_OUT->widthStep, step_gray};
+
+	float data[] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
+	const Kernel sobelX = {data, 3};
 
 	// Boucle tant que l'utilisateur n'appuie pas sur la touche q (ou Q)
     while(ESC_keyboard != 'q' && ESC_keyboard != 'Q') {
@@ -82,11 +98,12 @@ int main()
 		// On récupère une Image_IN
 		Image_IN = cvQueryFrame(capture);
 		// Initialisation des pointeurs de donnée
-		Data_in  = (uchar *) Image_IN->imageData;
-		Data_out = (uchar *) Image_OUT->imageData;
+		inputImage.data  = (uchar *) Image_IN->imageData;
+		outputImage.data = (uchar *) Image_OUT->imageData;
 
 		// Conversion de l'image d'entrée en niveaux de gris
-		getGrayScaleImage(Data_in, Data_out, info);
+		getGrayScaleImage(&inputImage, &outputImage);
+		applyFilter(&inputImage, &outputImage, &sobelX);
 
 		// On affiche l'Image_IN dans une fenêtre
 		cvShowImage( "Image_IN_Window", Image_IN);
