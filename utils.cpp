@@ -19,7 +19,7 @@ void sobel(Image* image) {
     Image* Gy = copyImage(image);
 
     // On applique les filtres
-    if(Gx->channels > 1) {
+    if(Gx->channels == 1) {
         applyFilterGray(Gx, &sobelX);
         applyFilterGray(Gy, &sobelY);
     } else {
@@ -51,15 +51,15 @@ void normGradient(const Image* dest, const Image* Gx, const Image* Gy) {
     }
 }
 
-void applyFilterGray(const Image* image, const Kernel* kernel) {
+void applyFilterGray(const Image* dest, const Kernel* kernel) {
     // Copie temporaire des données de l'image
-    Image* copy = copyImage(image);
-    const int step = image->width * image->channels * sizeof(uchar);
+    Image* copy = copyImage(dest);
+    const int step = dest->width * dest->channels * sizeof(uchar);
 
-    for (int i = 0; i < image->height; ++i) {
-        for (int j = 0; j < image->width; ++j) {
+    for (int i = 0; i < dest->height; ++i) {
+        for (int j = 0; j < dest->width; ++j) {
             const float convResult = conv2dGray(copy, {(float)j, (float)i}, kernel);
-            image->data[i * step + j] = (uchar) clampf(convResult);
+            dest->data[i * step + j] = (uchar) clampf(convResult);
         }
     }
 
@@ -67,19 +67,19 @@ void applyFilterGray(const Image* image, const Kernel* kernel) {
     freeImage(copy);
 }
 
-void applyFilterColor(const Image* image, const Kernel* kernel) {
+void applyFilterColor(const Image* dest, const Kernel* kernel) {
     // Copie temporaire des données de l'image
-    Image* copy = copyImage(image);
-    const int chs = image->channels;
-    const int step = image->width * chs * sizeof(uchar);
+    Image* copy = copyImage(dest);
+    const int chs = dest->channels;
+    const int step = dest->width * chs * sizeof(uchar);
 
-    for (int i = 0; i < image->height; ++i) {
-        for (int j = 0; j < image->width; ++j) {
+    for (int i = 0; i < dest->height; ++i) {
+        for (int j = 0; j < dest->width; ++j) {
             const float3 convResult = conv2dColor(copy, {(float)j, (float)i}, kernel);
             const int idPixel = i * step + j * chs;
-            image->data[idPixel + 0] = (uchar) clampf(convResult.x);
-            image->data[idPixel + 1] = (uchar) clampf(convResult.y);
-            image->data[idPixel + 2] = (uchar) clampf(convResult.z);
+            dest->data[idPixel + 0] = (uchar) clampf(convResult.x);
+            dest->data[idPixel + 1] = (uchar) clampf(convResult.y);
+            dest->data[idPixel + 2] = (uchar) clampf(convResult.z);
         }
     }
 
@@ -87,7 +87,7 @@ void applyFilterColor(const Image* image, const Kernel* kernel) {
     freeImage(copy);
 }
 
-float conv2dGray(const Image* image, const Coord& pixel, const Kernel* kernel) {
+float conv2dGray(const Image* image, const Coord pixel, const Kernel* kernel) {
     const uint kernelWidth = kernel->width;
     const uint kernelHeight = kernel->height;
     const uint width = image->width;
@@ -124,7 +124,7 @@ float conv2dGray(const Image* image, const Coord& pixel, const Kernel* kernel) {
     return sum;
 }
 
-float3 conv2dColor(const Image* image, const Coord& pixel, const Kernel* kernel) {
+float3 conv2dColor(const Image* image, const Coord pixel, const Kernel* kernel) {
     const uint kernelWidth = kernel->width;
     const uint kernelHeight = kernel->height;
     const uint width = image->width;

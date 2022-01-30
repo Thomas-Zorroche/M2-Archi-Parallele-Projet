@@ -28,13 +28,13 @@ static const Kernel sobelX = {dataSobelX, 3, 3};
 static float dataSobelY[] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
 static const Kernel sobelY = {dataSobelY, 3, 3};
 
-void getGrayScaleImage(const Image* imageIN, Image* imageOut);
+void getGrayScaleImage(const Image* imageIn, Image* imageOut);
 
 void applyFilterGray(const Image* image, const Kernel* kernel);
 void applyFilterColor(const Image* image, const Kernel* kernel);
 
-float conv2dGray(const Image* image, const Coord& pixel, const Kernel* kernel);
-float3 conv2dColor(const Image* image, const Coord& pixel, const Kernel* kernel);
+float conv2dGray(const Image* dest, const Coord pixel, const Kernel* kernel);
+float3 conv2dColor(const Image* dest, const Coord pixel, const Kernel* kernel);
 
 void sobel(Image* image);
 void normGradient(const Image* dest, const Image* Gx, const Image* Gy);
