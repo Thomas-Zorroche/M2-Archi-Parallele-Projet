@@ -99,7 +99,12 @@ int main(int argc, char* argv[])
 
 		// Conversion de l'image d'entrée en niveaux de gris
 		getGrayScaleImage(&inputImage, &outputImage);
-		sobel(&outputImage);
+
+		// Apply Median Filter
+		medianFilter(&outputImage);
+
+		// Apply Sobel Filter
+		//sobel(&outputImage);
 
 		// On affiche l'Image_IN dans une fenêtre
 		cvShowImage( "Image_IN_Window", Image_IN);

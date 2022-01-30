@@ -8,6 +8,8 @@ typedef struct Image {
     uint height;    // Hauteur de l'image
     uint width;     // Largeur de l'image
     int channels;   // Nombre de cannaux
+
+    uchar getDataAtPixel(int idPixel);
 } Image;
 
 typedef struct Coord {
@@ -38,6 +40,8 @@ float3 conv2dColor(const Image* dest, const Coord pixel, const Kernel* kernel);
 
 void sobel(Image* image);
 void normGradient(const Image* dest, const Image* Gx, const Image* Gy);
+
+void medianFilter(Image* image);
 
 Image* copyImage(const Image* image);
 void freeImage(Image* image);
