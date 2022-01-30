@@ -10,9 +10,10 @@ typedef struct Image {
 } Image;
 
 typedef struct Coord {
-    int x;
-    int y;
-} Coord, Point;
+    float x;
+    float y;
+    float z = 0;
+} Coord, Point, float3;
 
 typedef struct Kernel {
     float* data;
@@ -21,7 +22,9 @@ typedef struct Kernel {
 } Kernel;
 
 void getGrayScaleImage(const Image* imageIN, Image* imageOut);
-void applyFilter(const Image* image, const Kernel* kernel);
-float conv2d(const Image* image, const Coord& pixel, const Kernel* kernel);
+void applyFilterGray(const Image* image, const Kernel* kernel);
+void applyFilterColor(const Image* image, const Kernel* kernel);
+float conv2dGray(const Image* image, const Coord& pixel, const Kernel* kernel);
+float3 conv2dColor(const Image* image, const Coord& pixel, const Kernel* kernel);
 Image* copyImage(const Image* image);
-void freeCopyImage(Image* image);
+void freeImage(Image* image);
