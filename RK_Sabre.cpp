@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
 		getGrayScaleImage(&inputImage, &outputImage);
 
 		// Apply Median Filter
-		medianFilter(&outputImage);
+		medianFilter(&outputImage, 1);
 
 		// Apply Sobel Filter
 		//sobel(&outputImage);
