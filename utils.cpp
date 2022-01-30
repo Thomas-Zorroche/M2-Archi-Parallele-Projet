@@ -29,6 +29,9 @@ void sobel(Image* image) {
 
     // Norme du gradient
     normGradient(image, Gx, Gy);
+
+    freeImage(Gx);
+    freeImage(Gy);
 }
 
 void normGradient(const Image* dest, const Image* Gx, const Image* Gy) {

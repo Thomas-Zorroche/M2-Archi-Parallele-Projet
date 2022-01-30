@@ -84,7 +84,6 @@ int main(int argc, char* argv[])
 
 	// Création de l'image de sortie
 	Image_OUT = cvCreateImage(cvSize(Image_IN->width, Image_IN->height),  IPL_DEPTH_8U, 1);
-	int step_gray = Image_OUT->widthStep / sizeof(uchar);
 
 	Image inputImage 	= {nullptr, (uint)Image_IN->height, (uint)Image_IN->width, Image_IN->nChannels};
 	Image outputImage 	= {nullptr, (uint)Image_OUT->height, (uint)Image_OUT->width, Image_OUT->nChannels};
