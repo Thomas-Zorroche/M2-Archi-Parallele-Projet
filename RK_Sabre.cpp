@@ -89,12 +89,6 @@ int main(int argc, char* argv[])
 	Image inputImage 	= {nullptr, (uint)Image_IN->height, (uint)Image_IN->width, Image_IN->nChannels};
 	Image outputImage 	= {nullptr, (uint)Image_OUT->height, (uint)Image_OUT->width, Image_OUT->nChannels};
 
-	// Filtres
-	float dataSobelX[] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
-	const Kernel sobelX = {dataSobelX, 3, 3};
-	float dataSobelY[] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
-	const Kernel sobelY = {dataSobelY, 3, 3};
-
 	// Boucle tant que l'utilisateur n'appuie pas sur la touche q (ou Q)
     while(ESC_keyboard != 'q' && ESC_keyboard != 'Q') {
  
@@ -106,7 +100,7 @@ int main(int argc, char* argv[])
 
 		// Conversion de l'image d'entrée en niveaux de gris
 		getGrayScaleImage(&inputImage, &outputImage);
-		applyFilterGray(&outputImage, &sobelY);
+		sobel(&outputImage);
 
 		// On affiche l'Image_IN dans une fenêtre
 		cvShowImage( "Image_IN_Window", Image_IN);

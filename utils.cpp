@@ -14,6 +14,43 @@ void getGrayScaleImage(const Image* imageIn, Image* imageOut) {
     }
 }
 
+void sobel(Image* image) {
+    Image* Gx = copyImage(image);
+    Image* Gy = copyImage(image);
+
+    // On applique les filtres
+    if(Gx->channels > 1) {
+        applyFilterGray(Gx, &sobelX);
+        applyFilterGray(Gy, &sobelY);
+    } else {
+        applyFilterColor(Gx, &sobelX);
+        applyFilterColor(Gy, &sobelY);
+    }
+
+    // Norme du gradient
+    normGradient(image, Gx, Gy);
+}
+
+void normGradient(const Image* dest, const Image* Gx, const Image* Gy) {
+    // Il faudrait regarder pour l'image distination également ...
+    const int condition = Gx->width == Gy->width && Gx->height == Gy->height && Gx->channels == Gy->channels;
+    assert(condition && "Error::normGradient: given images do not have the same dimensions");
+
+    const int chs = Gx->channels;
+    const int step = Gx->width * chs * sizeof(uchar);
+
+    for(int i = 0; i < Gx->height; ++i) {
+        for(int j = 0; j < Gx->width; ++j) {
+            const int idPixel = i * step + j * chs;
+
+            for(int k = 0; k < chs; ++k) {
+                const float result = sqrt(pow(Gx->data[idPixel + k], 2) + pow(Gy->data[idPixel + k], 2));
+                dest->data[idPixel + k] = (uchar) clampf(result);
+            }
+        }
+    }
+}
+
 void applyFilterGray(const Image* image, const Kernel* kernel) {
     // Copie temporaire des données de l'image
     Image* copy = copyImage(image);
@@ -22,7 +59,7 @@ void applyFilterGray(const Image* image, const Kernel* kernel) {
     for (int i = 0; i < image->height; ++i) {
         for (int j = 0; j < image->width; ++j) {
             const float convResult = conv2dGray(copy, {(float)j, (float)i}, kernel);
-            image->data[i * step + j] = (convResult <= 0.0f ? 0 : (convResult >= 255.0f ? 255 : (uchar)convResult));
+            image->data[i * step + j] = (uchar) clampf(convResult);
         }
     }
 
@@ -40,9 +77,9 @@ void applyFilterColor(const Image* image, const Kernel* kernel) {
         for (int j = 0; j < image->width; ++j) {
             const float3 convResult = conv2dColor(copy, {(float)j, (float)i}, kernel);
             const int idPixel = i * step + j * chs;
-            image->data[idPixel + 0] = (convResult.x <= 0.0f ? 0 : (convResult.x >= 255.0f ? 255 : (uchar)convResult.x));
-            image->data[idPixel + 1] = (convResult.x <= 0.0f ? 0 : (convResult.x >= 255.0f ? 255 : (uchar)convResult.x));
-            image->data[idPixel + 2] = (convResult.x <= 0.0f ? 0 : (convResult.x >= 255.0f ? 255 : (uchar)convResult.x));
+            image->data[idPixel + 0] = (uchar) clampf(convResult.x);
+            image->data[idPixel + 1] = (uchar) clampf(convResult.y);
+            image->data[idPixel + 2] = (uchar) clampf(convResult.z);
         }
     }
 
@@ -148,4 +185,8 @@ Image* copyImage(const Image* image) {
 void freeImage(Image* image) {
     free(image->data);
     free(image);
+}
+
+float clampf(const float value, const float max, const float min) {
+    return (value <= min ? min : (value >= max ? max : value));
 }
