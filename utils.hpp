@@ -4,11 +4,9 @@
 
 typedef struct Image {
     uchar* data;    // Données de l'image
-    uint height;     // Hauteur de l'image
-    uint width;      // Largeur de l'image
+    uint height;    // Hauteur de l'image
+    uint width;     // Largeur de l'image
     int channels;   // Nombre de cannaux
-    int step;       // Distance entre les deux premiers pixels de lignes successives
-    int step_gray;
 } Image;
 
 typedef struct Coord {
@@ -23,5 +21,7 @@ typedef struct Kernel {
 } Kernel;
 
 void getGrayScaleImage(const Image* imageIN, Image* imageOut);
-void applyFilter(const Image* imageIn, Image* imageOut, const Kernel* kernel);
+void applyFilter(const Image* image, const Kernel* kernel);
 float conv2d(const Image* image, const Coord& pixel, const Kernel* kernel);
+Image* copyImage(const Image* image);
+void freeCopyImage(Image* image);

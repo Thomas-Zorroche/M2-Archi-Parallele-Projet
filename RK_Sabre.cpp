@@ -76,18 +76,18 @@ int main(int argc, char* argv[])
 	cvNamedWindow("Image_OUT_Window", CV_WINDOW_AUTOSIZE); 	// Image_OUT
 
 	// Positionnement des fenêtres
-	cvMoveWindow("Image_IN_Window", 0,0);
-	cvMoveWindow("Image_OUT_Window", 0,700);
+	cvMoveWindow("Image_IN_Window", 0, 0);
+	cvMoveWindow("Image_OUT_Window", 0, 700);
 
 	// Première acquisition
 	Image_IN = cvQueryFrame(capture); 
 
 	// Création de l'image de sortie
-	Image_OUT = cvCreateImage(cvSize(Image_IN->width,Image_IN->height),  IPL_DEPTH_8U, 1); 	
-	int step_gray = Image_OUT->widthStep/sizeof(uchar);
+	Image_OUT = cvCreateImage(cvSize(Image_IN->width, Image_IN->height),  IPL_DEPTH_8U, 1);
+	int step_gray = Image_OUT->widthStep / sizeof(uchar);
 
-	Image inputImage 	= {nullptr, (uint)Image_IN->height, (uint)Image_IN->width, Image_IN->nChannels, Image_IN->widthStep, step_gray};
-	Image outputImage 	= {nullptr, (uint)Image_OUT->height, (uint)Image_OUT->width, Image_OUT->nChannels, Image_OUT->widthStep, step_gray};
+	Image inputImage 	= {nullptr, (uint)Image_IN->height, (uint)Image_IN->width, Image_IN->nChannels};
+	Image outputImage 	= {nullptr, (uint)Image_OUT->height, (uint)Image_OUT->width, Image_OUT->nChannels};
 
 	// Filtres
 	float dataSobelX[] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
 
 		// Conversion de l'image d'entrée en niveaux de gris
 		getGrayScaleImage(&inputImage, &outputImage);
-		applyFilter(&inputImage, &outputImage, &sobelX);
+		// applyFilter(&outputImage, &sobelX);
 
 		// On affiche l'Image_IN dans une fenêtre
 		cvShowImage( "Image_IN_Window", Image_IN);
