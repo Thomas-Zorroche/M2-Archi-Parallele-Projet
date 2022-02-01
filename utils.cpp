@@ -249,6 +249,8 @@ void medianFilter(Image* image, int kernelSize)
     //uchar kernel[(1 + (2 * kernelSize)) * (1 + (2 * kernelSize))];
     uchar kernel[9];
 
+    static bool manualKernel = true;
+
 
     for(int i = 0; i < image->height; ++i) 
     {
@@ -256,28 +258,35 @@ void medianFilter(Image* image, int kernelSize)
         {
             const int idPixel = i * step + j * chs;
 
-            int idKernel = 0;
-            for (size_t kx = -1; kx <= 1; kx++)
+
+            if (!manualKernel)
             {
-                for (size_t ky = -1; ky <= 1; ky++)
+                int idKernel = 0;
+                for (size_t kx = -1; kx <= 1; kx++)
                 {
-                    int idNeighbour = idPixel + (ky * chs) + (kx * image->width);
-                    kernel[idKernel] = image->getDataAtPixel(idNeighbour);
-                    idKernel++;
-                } 
+                    for (size_t ky = -1; ky <= 1; ky++)
+                    {
+                        int idNeighbour = idPixel + (ky * chs) + (kx * image->width);
+                        kernel[idKernel] = image->getDataAtPixel(idNeighbour);
+                        idKernel++;
+                    } 
+                }
+            }
+            else
+            {
+                kernel[0] = image->getDataAtPixel(idPixel);
+                kernel[1] = image->getDataAtPixel(idPixel + chs);
+                kernel[2] = image->getDataAtPixel(idPixel - chs);
+
+                kernel[3] = image->getDataAtPixel(idPixel + image->width);
+                kernel[4] = image->getDataAtPixel(idPixel + image->width + chs);
+                kernel[5] = image->getDataAtPixel(idPixel + image->width - chs);
+
+                kernel[6] = image->getDataAtPixel(idPixel - image->width);
+                kernel[7] = image->getDataAtPixel(idPixel - image->width + chs);
+                kernel[8] = image->getDataAtPixel(idPixel - image->width - chs);
             }
 
-            // kernel[0] = image->getDataAtPixel(idPixel);
-            // kernel[1] = image->getDataAtPixel(idPixel + chs);
-            // kernel[2] = image->getDataAtPixel(idPixel - chs);
-
-            // kernel[3] = image->getDataAtPixel(idPixel + image->width);
-            // kernel[4] = image->getDataAtPixel(idPixel + image->width + chs);
-            // kernel[5] = image->getDataAtPixel(idPixel + image->width - chs);
-
-            // kernel[6] = image->getDataAtPixel(idPixel - image->width);
-            // kernel[7] = image->getDataAtPixel(idPixel - image->width + chs);
-            // kernel[8] = image->getDataAtPixel(idPixel - image->width - chs);
 
             image->data[idPixel] = getMedianValue(kernel, 9/*idKernel*/);
         }
