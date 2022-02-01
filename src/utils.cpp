@@ -45,8 +45,8 @@ void normGradient(const Image* dest, const Image* Gx, const Image* Gy) {
     const int chs = Gx->channels;
     const int step = Gx->width * chs * sizeof(uchar);
 
-    for(int i = 0; i < Gx->height; ++i) {
-        for(int j = 0; j < Gx->width; ++j) {
+    for(uint i = 0; i < Gx->height; ++i) {
+        for(uint j = 0; j < Gx->width; ++j) {
             const int idPixel = i * step + j * chs;
 
             for(int k = 0; k < chs; ++k) {
@@ -62,8 +62,8 @@ void applyFilterGray(const Image* dest, const Kernel* kernel) {
     Image* copy = copyImage(dest);
     const int step = dest->width * dest->channels * sizeof(uchar);
 
-    for (int i = 0; i < dest->height; ++i) {
-        for (int j = 0; j < dest->width; ++j) {
+    for (uint i = 0; i < dest->height; ++i) {
+        for (uint j = 0; j < dest->width; ++j) {
             const float convResult = conv2dGray(copy, {(float)j, (float)i}, kernel);
             dest->data[i * step + j] = (uchar) clampf(convResult);
         }
@@ -79,8 +79,8 @@ void applyFilterColor(const Image* dest, const Kernel* kernel) {
     const int chs = dest->channels;
     const int step = dest->width * chs * sizeof(uchar);
 
-    for (int i = 0; i < dest->height; ++i) {
-        for (int j = 0; j < dest->width; ++j) {
+    for (uint i = 0; i < dest->height; ++i) {
+        for (uint j = 0; j < dest->width; ++j) {
             const float3 convResult = conv2dColor(copy, {(float)j, (float)i}, kernel);
             const int idPixel = i * step + j * chs;
             dest->data[idPixel + 0] = (uchar) clampf(convResult.x);
@@ -105,8 +105,8 @@ float conv2dGray(const Image* image, const Coord pixel, const Kernel* kernel) {
 
     for (uint i = 0; i < kernelHeight; ++i) {
         for (uint j = 0; j < kernelWidth; ++j) {
-            int dX = pixel.x + i - kernelWidth / 2;
-            int dY = pixel.y + j - kernelHeight / 2;
+            uint dX = pixel.x + i - kernelWidth / 2;
+            uint dY = pixel.y + j - kernelHeight / 2;
 
             // Handle borders
             if (dX < 0)
@@ -142,8 +142,8 @@ float3 conv2dColor(const Image* image, const Coord pixel, const Kernel* kernel) 
 
     for (uint i = 0; i < kernelHeight; ++i) {
         for (uint j = 0; j < kernelWidth; ++j) {
-            int dX = pixel.x + i - kernelWidth / 2;
-            int dY = pixel.y + j - kernelHeight / 2;
+            uint dX = pixel.x + i - kernelWidth / 2;
+            uint dY = pixel.y + j - kernelHeight / 2;
 
             // Handle borders
             if (dX < 0)
@@ -251,9 +251,9 @@ void medianFilter(Image* image, int kernelSize)
 
     static bool manualKernel = false;
 
-    for(int i = 0; i < image->height; ++i) 
+    for(uint i = 0; i < image->height; ++i) 
     {
-        for(int j = 0; j < image->width; ++j) 
+        for(uint j = 0; j < image->width; ++j) 
         {
             const int idPixel = i * step + j * chs;
 
