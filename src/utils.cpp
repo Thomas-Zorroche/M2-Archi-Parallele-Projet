@@ -18,53 +18,13 @@ void getGrayScaleImage(const Image* imageIn, Image* imageOut) {
     }
 }
 
-void sobel(Image* image) {
-    Image* Gx = copyImage(image);
-    Image* Gy = copyImage(image);
-
-    // On applique les filtres
-    if(Gx->channels == 1) {
-        applyFilterGray(Gx, &sobelX);
-        applyFilterGray(Gy, &sobelY);
-    } else {
-        applyFilterColor(Gx, &sobelX);
-        applyFilterColor(Gy, &sobelY);
-    }
-
-    // Norme du gradient
-    normGradient(image, Gx, Gy);
-
-    freeImage(Gx);
-    freeImage(Gy);
-}
-
-void normGradient(const Image* dest, const Image* Gx, const Image* Gy) {
-    // Il faudrait regarder pour l'image distination également ...
-    const int condition = Gx->width == Gy->width && Gx->height == Gy->height && Gx->channels == Gy->channels;
-    assert(condition && "Error::normGradient: given images do not have the same dimensions");
-
-    const int chs = Gx->channels;
-    const int step = Gx->width * chs * sizeof(uchar);
-
-    for(int i = 0; i < Gx->height; ++i) {
-        for(int j = 0; j < Gx->width; ++j) {
-            const int idPixel = i * step + j * chs;
-
-            for(int k = 0; k < chs; ++k) {
-                const float result = sqrt(pow(Gx->data[idPixel + k], 2) + pow(Gy->data[idPixel + k], 2));
-                dest->data[idPixel + k] = (uchar) clampf(result);
-            }
-        }
-    }
-}
-
-void applyFilterGray(const Image* dest, const Kernel* kernel) {
+void applyConv2dGray(const Image* dest, const Kernel* kernel) {
     // Copie temporaire des données de l'image
     Image* copy = copyImage(dest);
     const int step = dest->width * dest->channels * sizeof(uchar);
 
-    for (int i = 0; i < dest->height; ++i) {
-        for (int j = 0; j < dest->width; ++j) {
+    for (uint i = 0; i < dest->height; ++i) {
+        for (uint j = 0; j < dest->width; ++j) {
             const float convResult = conv2dGray(copy, {(float)j, (float)i}, kernel);
             dest->data[i * step + j] = (uchar) clampf(convResult);
         }
@@ -74,14 +34,14 @@ void applyFilterGray(const Image* dest, const Kernel* kernel) {
     freeImage(copy);
 }
 
-void applyFilterColor(const Image* dest, const Kernel* kernel) {
+void applyConv2dColor(const Image* dest, const Kernel* kernel) {
     // Copie temporaire des données de l'image
     Image* copy = copyImage(dest);
     const int chs = dest->channels;
     const int step = dest->width * chs * sizeof(uchar);
 
-    for (int i = 0; i < dest->height; ++i) {
-        for (int j = 0; j < dest->width; ++j) {
+    for (uint i = 0; i < dest->height; ++i) {
+        for (uint j = 0; j < dest->width; ++j) {
             const float3 convResult = conv2dColor(copy, {(float)j, (float)i}, kernel);
             const int idPixel = i * step + j * chs;
             dest->data[idPixel + 0] = (uchar) clampf(convResult.x);
@@ -106,8 +66,8 @@ float conv2dGray(const Image* image, const Coord pixel, const Kernel* kernel) {
 
     for (uint i = 0; i < kernelHeight; ++i) {
         for (uint j = 0; j < kernelWidth; ++j) {
-            int dX = pixel.x + i - kernelWidth / 2;
-            int dY = pixel.y + j - kernelHeight / 2;
+            uint dX = pixel.x + i - kernelWidth / 2;
+            uint dY = pixel.y + j - kernelHeight / 2;
 
             // Handle borders
             if (dX < 0)
@@ -143,8 +103,8 @@ float3 conv2dColor(const Image* image, const Coord pixel, const Kernel* kernel) 
 
     for (uint i = 0; i < kernelHeight; ++i) {
         for (uint j = 0; j < kernelWidth; ++j) {
-            int dX = pixel.x + i - kernelWidth / 2;
-            int dY = pixel.y + j - kernelHeight / 2;
+            uint dX = pixel.x + i - kernelWidth / 2;
+            uint dY = pixel.y + j - kernelHeight / 2;
 
             // Handle borders
             if (dX < 0)
@@ -350,7 +310,7 @@ uchar getMedianValue(uchar kernel[], int n, Chrono& chrono)
     //return quickselect(kernel, 0, n - 1, (int) (n / 2) + 1);
 }
 
-void medianFilter(Image* image, int kernelSize, Chrono& chrono)
+void medianFilter(Image* image, Chrono& chrono, int kernelSize)
 {
     const int chs = image->channels; // 1
     const int step = image->width * chs /* * sizeof(uchar)*/;
@@ -358,9 +318,9 @@ void medianFilter(Image* image, int kernelSize, Chrono& chrono)
     uchar kernel[(1 + (2 * kernelSize)) * (1 + (2 * kernelSize))];
     
     #pragma omp parallel for collapse(2)
-    for(int i = 0; i < image->height; ++i) 
+    for(uint i = 0; i < image->height; ++i) 
     {
-        for(int j = 0; j < image->width; ++j) 
+        for(uint j = 0; j < image->width; ++j) 
         {
             const int idPixel = i * step + j * chs;
             int idKernel = 0;
@@ -378,23 +338,4 @@ void medianFilter(Image* image, int kernelSize, Chrono& chrono)
         }
     }
     
-}
-
-void Chrono::start() { begin = clock(); }
-void Chrono::stop() {
-    end = clock();
-    times += (double)(end - begin) / (double)CLOCKS_PER_SEC * 1000.0;
-    nbTimes++;
-}
-
-// Affiche le temps écoulé en ms
-void Chrono::printElapsedTime() {
-    double elapsedTime = (double)(end - begin) / (double)CLOCKS_PER_SEC * 1000.0;
-    printf("Elapsed time: %f ms\n", elapsedTime);
-}
-
-// Affiche le temps moyen écoulé lors de l'éxécution de l'algo
-void Chrono::printMeanTime() {
-    double meanTime = times / (double) nbTimes;
-    printf("Mean time: %lF ms\n", meanTime);
 }

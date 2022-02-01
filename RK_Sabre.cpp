@@ -19,7 +19,8 @@
  * IGM_M2_Image
  */
 
-#include "utils.hpp"
+#include "src/utils.hpp"
+#include "src/chrono.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -97,7 +98,7 @@ int main(int argc, char* argv[])
 
 		// Apply Median Filter
 		chrono.start();
-		medianFilter(&outputImage, 3, chrono);
+		medianFilter(&outputImage, chrono);
 	    chrono.stop();
 
 		// Apply Sobel Filter
