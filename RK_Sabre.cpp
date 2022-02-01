@@ -21,6 +21,8 @@
 
 #include "src/utils.hpp"
 #include "src/chrono.hpp"
+#include "src/sobel.hpp"
+#include "src/median.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -102,7 +104,7 @@ int main(int argc, char* argv[])
 	    chrono.stop();
 
 		// Apply Sobel Filter
-		//sobel(&outputImage);
+		sobel(&outputImage);
 
 		// On affiche l'Image_IN dans une fenêtre
 		cvShowImage( "Image_IN_Window", Image_IN);

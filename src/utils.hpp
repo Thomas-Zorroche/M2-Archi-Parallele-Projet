@@ -9,6 +9,7 @@
 
 #include <assert.h>
 #include <time.h>
+#include <omp.h>
 #include "chrono.hpp"
 
 typedef struct Image {
@@ -39,8 +40,6 @@ void applyConv2dColor(const Image* image, const Kernel* kernel);
 
 float conv2dGray(const Image* dest, const Coord pixel, const Kernel* kernel);
 float3 conv2dColor(const Image* dest, const Coord pixel, const Kernel* kernel);
-
-void medianFilter(Image* image, Chrono& chrono, int kernelSize = 1);
 
 Image* copyImage(const Image* image);
 void freeImage(Image* image);
