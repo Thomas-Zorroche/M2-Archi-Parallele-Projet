@@ -93,12 +93,12 @@ int main(int argc, char* argv[])
 		outputImage.data = (uchar *) Image_OUT->imageData;
 
 		// Conversion de l'image d'entrée en niveaux de gris
-		chrono.start();
 		getGrayScaleImage(&inputImage, &outputImage);
-		chrono.stop();
 
 		// Apply Median Filter
-		// medianFilter(&outputImage, 1);
+		chrono.stop();
+		medianFilter(&outputImage, 3, chrono);
+	    chrono.stop();
 
 		// Apply Sobel Filter
 		//sobel(&outputImage);
@@ -123,3 +123,24 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
+
+
+/*
+* MedianFilter : 96ms
+*	
+*   1px
+*   - bubble sort :   0.001020 ms
+*   - quickselect :   0.001011 ms
+*   - quickselect2 :  0.001129 ms
+*
+*   - getPixelKernel: 0.000799 ms
+
+*  3px
+*   - bubble sort :   0.008518 ms
+*   - quickselect :   0.003928 ms
+*   - quickselect2 :  0.003052 ms
+*
+*   - getPixelKernel: 0.001195 ms
+
+
+*/

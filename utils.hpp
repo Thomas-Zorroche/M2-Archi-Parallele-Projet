@@ -61,7 +61,7 @@ float3 conv2dColor(const Image* dest, const Coord pixel, const Kernel* kernel);
 void sobel(Image* image);
 void normGradient(const Image* dest, const Image* Gx, const Image* Gy);
 
-void medianFilter(Image* image, int kernelSize = 1);
+void medianFilter(Image* image, int kernelSize, Chrono& chrono);
 
 Image* copyImage(const Image* image);
 void freeImage(Image* image);
