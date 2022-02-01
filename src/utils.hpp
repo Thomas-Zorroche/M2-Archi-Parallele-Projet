@@ -31,19 +31,6 @@ typedef struct Kernel {
     uint height;
 } Kernel;
 
-typedef struct Chrono {
-    char* name;
-    clock_t begin = 0;  // Temps avant début algorithme
-    clock_t end = 0;    // Temps après alogrithme
-    double times = 0.0; // Tous les temps mesurés
-    uint nbTimes = 0;   // Nombre de temps mesurés
-
-    void start();
-    void stop();
-    void printMeanTime();
-    void printElapsedTime();
-} Chrono;
-
 // Filtres
 static float dataSobelX[] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
 static const Kernel sobelX = {dataSobelX, 3, 3};

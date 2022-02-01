@@ -19,7 +19,8 @@
  * IGM_M2_Image
  */
 
-#include "utils.hpp"
+#include "src/utils.hpp"
+#include "src/chrono.hpp"
 
 int main(int argc, char* argv[])
 {
