@@ -1,7 +1,14 @@
 #pragma once
 
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <opencv/highgui.h>
 #include <opencv/cv.h>
+
 #include <assert.h>
+#include <time.h>
 
 typedef struct Image {
     uchar* data;    // Données de l'image
@@ -23,6 +30,19 @@ typedef struct Kernel {
     uint width;
     uint height;
 } Kernel;
+
+typedef struct Chrono {
+    char* name;
+    clock_t begin = 0;  // Temps avant début algorithme
+    clock_t end = 0;    // Temps après alogrithme
+    double times = 0.0; // Tous les temps mesurés
+    uint nbTimes = 0;   // Nombre de temps mesurés
+
+    void start();
+    void stop();
+    void printMeanTime();
+    void printElapsedTime();
+} Chrono;
 
 // Filtres
 static float dataSobelX[] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};

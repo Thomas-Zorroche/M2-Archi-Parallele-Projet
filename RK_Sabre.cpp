@@ -18,14 +18,6 @@
  * And modified by Rostom Kachouri; 16/02/2016
  * IGM_M2_Image
  */
- 
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-// OpenCV header
-#include <opencv/highgui.h>
-#include <opencv/cv.h>
 
 #include "utils.hpp"
 
@@ -56,6 +48,9 @@ int main(int argc, char* argv[])
 	// Images
 	IplImage *Image_IN;
 	IplImage *Image_OUT;
+
+	// Outils pour la mesure des temps
+	Chrono chrono;
 		
 	// Capture vidéo
 	CvCapture *capture;
@@ -98,10 +93,12 @@ int main(int argc, char* argv[])
 		outputImage.data = (uchar *) Image_OUT->imageData;
 
 		// Conversion de l'image d'entrée en niveaux de gris
+		chrono.start();
 		getGrayScaleImage(&inputImage, &outputImage);
+		chrono.stop();
 
 		// Apply Median Filter
-		medianFilter(&outputImage, 1);
+		// medianFilter(&outputImage, 1);
 
 		// Apply Sobel Filter
 		//sobel(&outputImage);
@@ -114,6 +111,8 @@ int main(int argc, char* argv[])
 		// On attend 5ms
 		ESC_keyboard = cvWaitKey(5);
     }
+
+	chrono.printMeanTime();
 
 	// Fermeture de l'acquisition Vidéo
 	cvReleaseCapture(&capture);
