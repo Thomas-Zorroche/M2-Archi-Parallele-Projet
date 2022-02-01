@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
 		getGrayScaleImage(&inputImage, &outputImage);
 
 		// Apply Median Filter
-		chrono.stop();
+		chrono.start();
 		medianFilter(&outputImage, 3, chrono);
 	    chrono.stop();
 
@@ -141,6 +141,13 @@ int main(int argc, char* argv[])
 *   - quickselect2 :  0.003052 ms
 *
 *   - getPixelKernel: 0.001195 ms
+
+
+
+* 3px 				--> 904.276633 ms
+* 3px omp (1 for)   --> 843.336721 ms
+* 3px omp (2 for)   --> 902.591213 ms
+
 
 
 */

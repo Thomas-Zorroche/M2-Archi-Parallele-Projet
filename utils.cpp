@@ -1,5 +1,6 @@
 #include "utils.hpp"
 #include <stdlib.h>
+#include <omp.h>
 
 #define SWAP(x, y) { uchar temp = x; x = y; y = temp; }
 
@@ -343,10 +344,10 @@ uchar getMedianValue(uchar kernel[], int n, Chrono& chrono)
     
     // Quickselect #1
     //printf("%d", (int)n/2);
-    //return kthSmallest(kernel, 0, n-1, (int) (n / 2) + 1);
+    return kthSmallest(kernel, 0, n-1, (int) (n / 2) + 1);
 
     // Quickselect #2
-    return quickselect(kernel, 0, n - 1, (int) (n / 2) + 1);
+    //return quickselect(kernel, 0, n - 1, (int) (n / 2) + 1);
 }
 
 void medianFilter(Image* image, int kernelSize, Chrono& chrono)
@@ -356,12 +357,14 @@ void medianFilter(Image* image, int kernelSize, Chrono& chrono)
 
     uchar kernel[(1 + (2 * kernelSize)) * (1 + (2 * kernelSize))];
     
+    #pragma omp parallel for collapse(2)
     for(int i = 0; i < image->height; ++i) 
     {
         for(int j = 0; j < image->width; ++j) 
         {
             const int idPixel = i * step + j * chs;
             int idKernel = 0;
+            
             for (int kx = -kernelSize; kx <= kernelSize; kx++)
             {
                 for (int ky = -kernelSize; ky <= kernelSize; ky++)
