@@ -238,7 +238,7 @@ uchar getMedianValue(uchar kernel[], int n)
     bubbleSort(kernel, n);
 
     // Return median value
-    return kernel[4];
+    return kernel[(int)n / 2];
 }
 
 void medianFilter(Image* image, int kernelSize)
@@ -246,11 +246,10 @@ void medianFilter(Image* image, int kernelSize)
     const int chs = image->channels; // 1
     const int step = image->width * chs /* * sizeof(uchar)*/;
 
-    //uchar kernel[(1 + (2 * kernelSize)) * (1 + (2 * kernelSize))];
-    uchar kernel[9];
+    uchar kernel[(1 + (2 * kernelSize)) * (1 + (2 * kernelSize))];
+    //uchar kernel[9];
 
-    static bool manualKernel = true;
-
+    static bool manualKernel = false;
 
     for(int i = 0; i < image->height; ++i) 
     {
@@ -258,13 +257,13 @@ void medianFilter(Image* image, int kernelSize)
         {
             const int idPixel = i * step + j * chs;
 
-
+            int idKernel = 0;
             if (!manualKernel)
             {
-                int idKernel = 0;
-                for (size_t kx = -1; kx <= 1; kx++)
+                
+                for (int kx = -kernelSize; kx <= kernelSize; kx++)
                 {
-                    for (size_t ky = -1; ky <= 1; ky++)
+                    for (int ky = -kernelSize; ky <= kernelSize; ky++)
                     {
                         int idNeighbour = idPixel + (ky * chs) + (kx * image->width);
                         kernel[idKernel] = image->getDataAtPixel(idNeighbour);
@@ -287,8 +286,7 @@ void medianFilter(Image* image, int kernelSize)
                 kernel[8] = image->getDataAtPixel(idPixel - image->width - chs);
             }
 
-
-            image->data[idPixel] = getMedianValue(kernel, 9/*idKernel*/);
+            image->data[idPixel] = getMedianValue(kernel, idKernel);
         }
     }
     
