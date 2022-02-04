@@ -99,12 +99,12 @@ int main(int argc, char* argv[])
 		getGrayScaleImage(&inputImage, &outputImage);
 
 		// Apply Median Filter
-		chrono.start();
-		medianFilter(&outputImage, chrono, 1);
-		chrono.stop();
+		// medianFilter(&outputImage, chrono, 1);
 
 		// Apply Sobel Filter
+		chrono.start();
 		sobel(&outputImage);
+		chrono.stop();
 
 		// On affiche l'Image_IN dans une fenêtre
 		cvShowImage( "Image_IN_Window", Image_IN);

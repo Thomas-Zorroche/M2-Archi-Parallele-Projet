@@ -44,4 +44,4 @@ float3 conv2dColor(const Image* dest, const Coord pixel, const Kernel* kernel);
 Image* copyImage(const Image* image);
 void freeImage(Image* image);
 
-float clampf(const float value, const float max = 253, const float min = 0);
+float clampf(const float value, const float max = 255, const float min = 0);
