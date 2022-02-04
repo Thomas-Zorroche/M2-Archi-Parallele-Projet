@@ -17,4 +17,4 @@ static float dataSobel135[] = {0, -1, -2, 1, 0, -1, 2, 1, 0};
 static const Kernel sobel135 = {dataSobel135, 3, 3};
 
 void sobel(Image* image);
-void normGradient(const Image* dest, const Image* gradients[4]);
+void normGradient(const Image* dest, const Image** gradients, const uint nbGradients);
