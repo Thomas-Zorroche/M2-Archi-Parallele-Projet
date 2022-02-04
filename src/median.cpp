@@ -136,10 +136,10 @@ uchar getMedianValue(uchar kernel[], int n, Chrono& chrono)
     
     // Quickselect #1
     //printf("%d", (int)n/2);
-    // return kthSmallest(kernel, 0, n-1, (int) (n / 2) + 1);
+    return kthSmallest(kernel, 0, n-1, (int) (n / 2) + 1);
 
     // Quickselect #2
-    return quickselect(kernel, 0, n - 1, (int) (n / 2) + 1);
+    //return quickselect(kernel, 0, n - 1, (int) (n / 2) + 1);
 }
 
 void medianFilter(Image* image, Chrono& chrono, int kernelSize)
