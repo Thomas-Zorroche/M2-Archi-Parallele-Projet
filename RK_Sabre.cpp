@@ -27,21 +27,29 @@
 int main(int argc, char* argv[])
 {
 	// Récupérer le numéro de caméra entré par l'utilisateur en paramètre
-	uint choosenCamera = 0;
+	uint choosenCamera 	= 0;
+	uint numberOfFrames = 100;
 	int opt;
-	while((opt = getopt(argc, argv, "c:")) != -1) {
+	while((opt = getopt(argc, argv, "c:f:")) != -1) {
 		switch (opt) {
 			case 'c':
 				choosenCamera = atoi(optarg);
 				break;
+
+			case 'f':
+				numberOfFrames = atoi(optarg);
+				break;
 			
 			default:
-				printf("Usage: program -c <id of camera (uint)>\n");
+				printf("Usage: program -c <id of camera (uint)> -f <number of frames, 0 = infinity (uint)>\n");
 				exit(EXIT_FAILURE);
 				break;
 		}
 	}
 	printf("Camera id: %d\n", choosenCamera);
+	printf("Number of frames: %d\n", numberOfFrames);
+	// Compteur de frames traitées
+	uint framesCounter = 0;
 
 	// Touche clavier pour quitter
 	char ESC_keyboard;
@@ -87,7 +95,7 @@ int main(int argc, char* argv[])
 	Image outputImage 	= {nullptr, (uint)Image_OUT->height, (uint)Image_OUT->width, Image_OUT->nChannels};
 
 	// Boucle tant que l'utilisateur n'appuie pas sur la touche q (ou Q)
-    while(ESC_keyboard != 'q' && ESC_keyboard != 'Q') {
+    while(ESC_keyboard != 'q' && ESC_keyboard != 'Q' && framesCounter <= numberOfFrames) {
  
 		// On récupère une Image_IN
 		Image_IN = cvQueryFrame(capture);
@@ -107,12 +115,15 @@ int main(int argc, char* argv[])
 		chrono.stop();
 
 		// On affiche l'Image_IN dans une fenêtre
-		cvShowImage( "Image_IN_Window", Image_IN);
+		cvShowImage("Image_IN_Window", Image_IN);
 		// On affiche l'Image_OUT dans une deuxième fenêtre
-		cvShowImage( "Image_OUT_Window", Image_OUT);
+		cvShowImage("Image_OUT_Window", Image_OUT);
 
 		// On attend 5ms
 		ESC_keyboard = cvWaitKey(5);
+
+		// Mise à jour du compteur de frames (sauf si 0 est sélectionné)
+		if(!(numberOfFrames == 0)) framesCounter++;
     }
 
 	chrono.printMeanTime();
@@ -126,31 +137,3 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
-
-
-/*
-* MedianFilter : 96ms
-*	
-*   1px
-*   - bubble sort :   0.001020 ms
-*   - quickselect :   0.001011 ms
-*   - quickselect2 :  0.001129 ms
-*
-*   - getPixelKernel: 0.000799 ms
-
-*  3px
-*   - bubble sort :   0.008518 ms
-*   - quickselect :   0.003928 ms
-*   - quickselect2 :  0.003052 ms
-*
-*   - getPixelKernel: 0.001195 ms
-
-
-
-* 3px 				--> 904.276633 ms
-* 3px omp (1 for)   --> 843.336721 ms
-* 3px omp (2 for)   --> 902.591213 ms
-
-
-
-*/
