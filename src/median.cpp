@@ -68,7 +68,7 @@ void bubbleSort(uchar arr[], int n)
   }
 }
 
-uchar getMedianValue(uchar kernel[], int n, Chrono& chrono)
+uchar getMedianValue(uchar kernel[], int n)
 {
     // Bubble sort
     //bubbleSort(kernel, n);
@@ -85,7 +85,6 @@ void medianFilter(Image* image, Chrono& chrono, int kernelSize)
     uchar kernel[(1 + (2 * kernelSize)) * (1 + (2 * kernelSize))];
     
     int idKernel, idNeighbour, idPixel = 0;
-    //#pragma omp parallel for collapse(2)
     for(uint i = 0; i < image->height; ++i) 
     {
         for(uint j = 0; j < image->width; ++j) 
@@ -101,7 +100,28 @@ void medianFilter(Image* image, Chrono& chrono, int kernelSize)
                     kernel[idKernel++] = image->getDataAtPixel(idNeighbour);
                 } 
             }
-            image->data[idPixel] = getMedianValue(kernel, idKernel, chrono);
+            image->data[idPixel] = getMedianValue(kernel, idKernel);
         }
+    }
+}
+
+void medianFilter_OPTI_1(Image* image, int kernelSize)
+{
+    const int step = image->width;
+
+    uchar kernel[(1 + (2 * kernelSize)) * (1 + (2 * kernelSize))];
+    
+    int idKernel, idNeighbour, idPixel = 0;
+    //#pragma omp parallel for collapse(2)
+    
+    for(uint i = 0; i < image->height * image->width; ++i) 
+    {
+        idKernel = 0;
+        for (int kx = 0; kx <= kernelSize; kx++)
+        {
+            idNeighbour = i + ky + (kx * image->width);
+            kernel[idKernel++] = image->getDataAtPixel(idNeighbour);
+        }
+        image->data[i] = getMedianValue(kernel, idKernel);
     }
 }

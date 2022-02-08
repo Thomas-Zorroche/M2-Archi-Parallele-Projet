@@ -152,12 +152,8 @@ void freeImage(Image* image) {
 
 uchar Image::getDataAtPixel(int idPixel)
 {
-    static const int numPixels = width * height * channels;
-
-    if (idPixel < 0 || idPixel >= numPixels)
-        return 0;
-
-    return data[idPixel];
+    static const int numPixels = width * height;
+    return (idPixel >= numPixels || idPixel < 0) ? 0 : data[idPixel];
 }
 
 float clampf(const float value, const float max, const float min) {
