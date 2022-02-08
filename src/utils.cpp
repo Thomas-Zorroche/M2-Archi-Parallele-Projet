@@ -22,27 +22,8 @@ void applyConv2dGray(const Image* dest, const Kernel* kernel) {
     for (uint i = 0; i < dest->height; ++i) {
         for (uint j = 0; j < dest->width; ++j) {
             const float convResult = conv2dGray(copy, {(float)j, (float)i}, kernel);
+            // const float convResult = conv2dGray_OPTI_1(copy, {(float)j, (float)i}, kernel);
             dest->data[i * step + j] = (uchar) clampf(convResult);
-        }
-    }
-
-    // On supprime la copie temporaire de l'image
-    freeImage(copy);
-}
-
-void applyConv2dColor(const Image* dest, const Kernel* kernel) {
-    // Copie temporaire des données de l'image
-    Image* copy = copyImage(dest);
-    const int chs = dest->channels;
-    const int step = dest->width * chs * sizeof(uchar);
-
-    for (uint i = 0; i < dest->height; ++i) {
-        for (uint j = 0; j < dest->width; ++j) {
-            const float3 convResult = conv2dColor(copy, {(float)j, (float)i}, kernel);
-            const int idPixel = i * step + j * chs;
-            dest->data[idPixel + 0] = (uchar) clampf(convResult.x);
-            dest->data[idPixel + 1] = (uchar) clampf(convResult.y);
-            dest->data[idPixel + 2] = (uchar) clampf(convResult.z);
         }
     }
 
@@ -87,40 +68,38 @@ float conv2dGray(const Image* image, const Coord pixel, const Kernel* kernel) {
     return sum;
 }
 
-float3 conv2dColor(const Image* image, const Coord pixel, const Kernel* kernel) {
+float conv2dGray_OPTI_1(const Image* image, const Coord pixel, const Kernel* kernel) {
     const uint kernelWidth = kernel->width;
     const uint kernelHeight = kernel->height;
-    const uint width = image->width;
-    const uint height = image->height;
-    const int chs = image->channels;
-    const int step = image->width * chs * sizeof(uchar);
+    const int width = image->width;
+    const int height = image->height;
+    const uint chs = image->channels;
+    const uint step = image->width * chs * sizeof(uchar);
 
-    float3 sum = {0.0f, 0.0f, 0.0f};
+    float sum = 0.0f;
 
-    for (uint i = 0; i < kernelHeight; ++i) {
-        for (uint j = 0; j < kernelWidth; ++j) {
-            uint dX = pixel.x + i - kernelWidth / 2;
-            uint dY = pixel.y + j - kernelHeight / 2;
+    const uint halfWidth = kernelWidth / 2;
+    const uint halfHeight = kernelHeight / 2;
 
-            // Handle borders
-            if (dX < 0)
-                dX = 0;
+    for (uint idKer = 0; idKer < kernelHeight * kernelWidth; ++idKer) {
+        int dX = pixel.x + (idKer % kernelWidth) - halfWidth;
+        int dY = pixel.y + (idKer / kernelHeight) - halfHeight;
 
-            if (dX >= width)
-                dX = width - 1;
+        // Handle borders
+        if (dX < 0)
+            dX = 0;
 
-            if (dY < 0) 
-                dY = 0;
+        if (dX >= width)
+            dX = width - 1;
 
-            if (dY >= height)
-                dY = height - 1;
+        if (dY < 0) 
+            dY = 0;
 
-            const int idKer		= j * kernelWidth + i;
-            const int idPixel	= dY * step + dX * chs;
-            sum.x += image->data[idPixel + 0] * kernel->data[idKer];
-            sum.y += image->data[idPixel + 1] * kernel->data[idKer];
-            sum.z += image->data[idPixel + 2] * kernel->data[idKer];
-        }
+        if (dY >= height)
+            dY = height - 1;
+
+        const uint idPixel = dY * step + dX;
+        sum += image->data[idPixel] * kernel->data[idKer];
     }
 
     return sum;
