@@ -5,6 +5,9 @@ void sobel(Image* image) {
     Image* G90 = copyImage(image);
 
     // On applique les filtres
+
+    /* /!\ NE FONCTIONNE PAS, PERTE D'INFOS /!\ */
+
     applyConv2D(G0, &sobel0);
     applyConv2D(G90, &sobel90);
 

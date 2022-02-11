@@ -4,4 +4,4 @@
 #include "convolution.hpp"
 
 void sobel(Image* image);
-void normGradient(const Image* dest, const Image** gradients);
+void normGradient(const Image* dest, const float** gradients, const float threshold);

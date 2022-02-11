@@ -2,5 +2,5 @@
 
 #include "../utils/utils.hpp"
 
-void sobelX(Image* dest, const Kernel* kernel, const float threshold);
-void sobelY(Image* dest, const Kernel* kernel, const float threshold);
+void sobelX(Image* image, float* Gx, const Kernel* kernel);
+void sobelY(Image* image, float* Gy, const Kernel* kernel);
