@@ -1,4 +1,5 @@
 #include "median.hpp"
+#include <omp.h>
 
 #define SWAP(x, y) { uchar temp = x; x = y; y = temp; }
 
@@ -136,24 +137,35 @@ void medianFilter_OPTI_1(Image* image)
     uchar kernel[(1 + (2 * 3 /* kernelsize */)) * (1 + (2 * 3 /* kernelsize */))];
     int idPixel, pixelX, pixelY = 0;
     
-    for(uint i = 0; i < image->height * image->width; ++i) 
+    int size = image->height * image->width;
+    int size_per_thread = size / 2;
+    int id;
+
+    #pragma omp parallel shared (size_per_thread, size) private(id)
     {
-        pixelX = i % image->width;
-        pixelY = i / image->width;
-        idPixel = pixelY * image->width + pixelX;
+        id = omp_get_thread_num();         // Get current thread number
         
-        kernel[0] = image->getDataAtPixel(idPixel);
-        kernel[1] = image->getDataAtPixel(idPixel + 1);
-        kernel[2] = image->getDataAtPixel(idPixel - 1);
+        #pragma omp for
+        for(uint i = 0; i < size_per_thread; ++i) 
+        {
+            pixelX = ((size_per_thread * id) + i) % image->width;
+            pixelY = ((size_per_thread * id) + i) / image->width;
+            idPixel = pixelY * image->width + pixelX;
+            
+            kernel[0] = image->getDataAtPixel(idPixel);
+            kernel[1] = image->getDataAtPixel(idPixel + 1);
+            kernel[2] = image->getDataAtPixel(idPixel - 1);
 
-        kernel[3] = image->getDataAtPixel(idPixel + image->width);
-        kernel[4] = image->getDataAtPixel(idPixel + image->width + 1);
-        kernel[5] = image->getDataAtPixel(idPixel + image->width - 1);
+            kernel[3] = image->getDataAtPixel(idPixel + image->width);
+            kernel[4] = image->getDataAtPixel(idPixel + image->width + 1);
+            kernel[5] = image->getDataAtPixel(idPixel + image->width - 1);
 
-        kernel[6] = image->getDataAtPixel(idPixel - image->width);
-        kernel[7] = image->getDataAtPixel(idPixel - image->width + 1);
-        kernel[8] = image->getDataAtPixel(idPixel - image->width - 1);
-        
-        image->data[i] = getMedianValue(kernel, 9);
+            kernel[6] = image->getDataAtPixel(idPixel - image->width);
+            kernel[7] = image->getDataAtPixel(idPixel - image->width + 1);
+            kernel[8] = image->getDataAtPixel(idPixel - image->width - 1);
+            
+            image->data[i] = getMedianValue(kernel, 9);
+        }
     }
+    #pragma omp barrier                    // Wait for all threads to complete
 }

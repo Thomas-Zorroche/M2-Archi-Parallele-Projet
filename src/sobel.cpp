@@ -66,7 +66,7 @@ void normGradient_OPTI_1(const Image* dest, const Image** gradients) {
 
     for(uint i = 0; i < dest->height; ++i) {
         for(uint j = 0; j < dest->width; ++j) {
-            idPixel = i * step + j * chs;
+            idPixel = i * step + j;
 
             sumAbsGradients = 0.f;
             sumAbsGradients += std::abs(gradients[0]->data[idPixel]);
