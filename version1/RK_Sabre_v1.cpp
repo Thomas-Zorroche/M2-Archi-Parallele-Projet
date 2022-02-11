@@ -19,10 +19,10 @@
  * IGM_M2_Image
  */
 
-#include "src/utils.hpp"
-#include "src/chrono.hpp"
-#include "src/sobel.hpp"
-#include "src/median.hpp"
+#include "../utils/utils.hpp"
+#include "../utils/chrono.hpp"
+#include "sobel.hpp"
+#include "median.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
 		getGrayScaleImage(&inputImage, &outputImage);
 
 		// Apply Median Filter
-		medianFilter_OPTI_1(&outputImage);
+		medianFilter(&outputImage);
 
 		// Apply Sobel Filter
 		sobel(&outputImage);

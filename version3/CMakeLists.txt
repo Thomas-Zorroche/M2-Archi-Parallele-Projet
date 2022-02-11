@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.13)
-project(RK_Projet)
-set(OUTPUT_NAME RK_Projet)
+cmake_minimum_required(VERSION 3.0)
+project(RK_Projet_v3)
+set(OUTPUT_NAME RK_Projet_v3)
 
 find_package(PkgConfig REQUIRED)
 find_package(OpenCV REQUIRED)
@@ -11,13 +11,13 @@ if (OPENMP_FOUND)
     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
-file(GLOB_RECURSE HEADER_FILES src/*.hpp)
-file(GLOB_RECURSE SRC_FILES src/*.cpp)
+file(GLOB_RECURSE HEADER_FILES *.hpp ../utils/*.hpp)
+file(GLOB_RECURSE SRC_FILES *.cpp ../utils/*.cpp)
 pkg_check_modules(PCKG REQUIRED IMPORTED_TARGET opencv)
 
 set(LIBS "pkg-config opencv --libs")
 set(COMP_OPTS "pkg-config opencv --cflags")
 
-add_executable(${OUTPUT_NAME} ${SRC_FILES} RK_Sabre.cpp ${HEADER_FILES})
-target_compile_options(${OUTPUT_NAME} PRIVATE -Wall -fopenmp)
+add_executable(${OUTPUT_NAME} ${SRC_FILES} ${HEADER_FILES})
+target_compile_options(${OUTPUT_NAME} PRIVATE -Wall -fopenmp -std=c++14)
 target_link_libraries(${OUTPUT_NAME} PUBLIC PkgConfig::PCKG)
