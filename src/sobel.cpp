@@ -19,7 +19,8 @@ void sobel(Image* image) {
 
     // Norme du gradient
     const Image* gradients[4] = {G0, G90, G45, G135};
-    normGradient(image, gradients, 4);
+    // normGradient(image, gradients, 4);
+    normGradient_OPTI_1(image, gradients); // Toujours utiliser 4 gradients
 
     freeImage(G0);
     freeImage(G90);
@@ -49,6 +50,28 @@ void normGradient(const Image* dest, const Image** gradients, const uint nbGradi
                 const float result = sqrt(sumSquaredGradients);
                 dest->data[idPixel + k] = (uchar) clampf(result);
             }
+        }
+    }
+}
+
+// Toujours utiliser 4 gradients
+void normGradient_OPTI_1(const Image* dest, const Image** gradients) {
+    const int chs = dest->channels;
+    const int step = dest->width * chs * sizeof(uchar);
+    float sumAbsGradients;
+    int idPixel;
+
+    for(uint i = 0; i < dest->height; ++i) {
+        for(uint j = 0; j < dest->width; ++j) {
+            idPixel = i * step + j * chs;
+
+            sumAbsGradients = 0.f;
+            sumAbsGradients += std::abs(gradients[0]->data[idPixel]);
+            sumAbsGradients += std::abs(gradients[1]->data[idPixel]);
+            sumAbsGradients += std::abs(gradients[2]->data[idPixel]);
+            sumAbsGradients += std::abs(gradients[3]->data[idPixel]);
+            
+            dest->data[idPixel] = (uchar) clampf(sumAbsGradients);
         }
     }
 }
