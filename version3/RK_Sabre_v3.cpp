@@ -94,6 +94,10 @@ int main(int argc, char* argv[])
 	Image inputImage 	= {nullptr, (uint)Image_IN->height, (uint)Image_IN->width, Image_IN->nChannels};
 	Image outputImage 	= {nullptr, (uint)Image_OUT->height, (uint)Image_OUT->width, Image_OUT->nChannels};
 
+	// On définit le nombre de threads à utiliser pour les parallélisations
+	omp_set_num_threads(NUM_THREADS);
+	printf("Threads used: %d\n", NUM_THREADS);
+
 	// Boucle tant que l'utilisateur n'appuie pas sur la touche q (ou Q)
 	chrono.start();
     while(ESC_keyboard != 'q' && ESC_keyboard != 'Q' && framesCounter <= numberOfFrames) {
@@ -111,7 +115,7 @@ int main(int argc, char* argv[])
 		medianFilter(&outputImage);
 
 		// Apply Sobel Filter
-		sobel(&outputImage);
+		// sobel(&outputImage);
 
 		// On affiche l'Image_IN dans une fenêtre
 		cvShowImage("Image_IN_Window", Image_IN);
@@ -121,9 +125,11 @@ int main(int argc, char* argv[])
 		// On attend 5ms
 		ESC_keyboard = cvWaitKey(5);
 
-		printf("%d\n", framesCounter);
 		// Mise à jour du compteur de frames (sauf si 0 est sélectionné)
-		if(!(numberOfFrames == 0)) framesCounter++;
+		if(!(numberOfFrames == 0)) {
+			printf("Frame n°%d\n", framesCounter);
+			framesCounter++;
+		}
     }
 	chrono.stop();
 	chrono.printElapsedSeconds();

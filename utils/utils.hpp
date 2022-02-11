@@ -12,6 +12,8 @@
 #include <omp.h>
 #include "chrono.hpp"
 
+static const uint NUM_THREADS = omp_get_max_threads();
+
 typedef struct Image {
     uchar* data;    // Données de l'image
     uint height;    // Hauteur de l'image
