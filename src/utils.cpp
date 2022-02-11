@@ -62,6 +62,44 @@ void applyConv2dGray_OPTI_1(Image* dest, const Kernel* kernel) {
     freeImage(copy);
 }
 
+void applyConv2dGray_OPTI_2(Image* dest, const Kernel* kernelA, const Kernel* kernelB) {
+    // Copie temporaire des données de l'image
+    float* copy = allocateFloatDataImage(dest);
+    int pixelX, pixelY, idPixel;
+    float convResult;
+
+    // Horizontal kernel
+    for (uint i = 0; i < dest->height * dest->width; ++i) {
+        pixelX = i % dest->width;
+        pixelY = i / dest->width;
+        idPixel = pixelY * dest->width + pixelX;
+        convResult = 0;
+
+        convResult += kernelA->data[0] * dest->getDataAtPixel(idPixel - 1);
+        convResult += kernelA->data[1] * dest->getDataAtPixel(idPixel);
+        convResult += kernelA->data[2] * dest->getDataAtPixel(idPixel + 1);
+
+        copy[idPixel] = convResult; // Ne pas clamp ici !
+    }
+
+    // Vertical kernel
+    for (uint i = 0; i < dest->height * dest->width; ++i) {
+        pixelX = i % dest->width;
+        pixelY = i / dest->width;
+        idPixel = pixelY * dest->width + pixelX;
+        convResult = 0;
+
+        convResult += kernelB->data[0] * getDataAtPixel(copy, idPixel - dest->width, dest->width, dest->height);
+        convResult += kernelB->data[1] * getDataAtPixel(copy, idPixel, dest->width, dest->height);
+        convResult += kernelB->data[2] * getDataAtPixel(copy, idPixel + dest->width, dest->width, dest->height);
+
+        dest->data[idPixel] = (uchar) clampfs(convResult);
+    }
+
+    // On supprime la copie temporaire de l'image
+    free(copy);
+}
+
 float conv2dGray(const Image* image, const Coord pixel, const Kernel* kernel) {
     const uint kernelWidth = kernel->width;
     const uint kernelHeight = kernel->height;
@@ -135,6 +173,19 @@ Image* copyImage(const Image* image) {
     memcpy(copy->data, image->data, bytes);
 
     return copy;
+}
+
+float* allocateFloatDataImage(const Image* image) {
+    float* copy = nullptr;
+    const size_t length = image->width * image->height * image->channels;
+    const size_t bytes = sizeof(float) * length;
+    copy = (float*) malloc(bytes);
+    return copy;
+}
+
+float getDataAtPixel(const float* data, int idPixel, const int width, const int height) {
+    static const int numPixels = width * height;
+    return (idPixel >= numPixels || idPixel < 0) ? 0 : data[idPixel];
 }
 
 void freeImage(Image* image) {
