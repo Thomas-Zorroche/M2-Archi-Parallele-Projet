@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
 		if(!(numberOfFrames == 0)) framesCounter++;
     }
 	chrono.stop();
-	chrono.printElapsedTime();
+	chrono.printElapsedSeconds();
 
 	// Fermeture de l'acquisition Vidéo
 	cvReleaseCapture(&capture);

@@ -15,5 +15,6 @@ typedef struct Chrono {
     void start();
     void stop();
     void printMeanTime();
-    void printElapsedTime();
+    void printElapsedMSeconds();
+    void printElapsedSeconds();
 } Chrono;

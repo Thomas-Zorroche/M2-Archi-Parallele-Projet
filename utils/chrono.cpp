@@ -11,9 +11,15 @@ void Chrono::stop() {
 }
 
 // Affiche le temps écoulé en ms
-void Chrono::printElapsedTime() {
+void Chrono::printElapsedMSeconds() {
     double elapsedTime = (double)(end - begin) / (double)CLOCKS_PER_SEC * 1000.0;
     printf("Elapsed time: %f ms\n", elapsedTime);
+}
+
+// Affiche le temps écoulé en s
+void Chrono::printElapsedSeconds() {
+    double elapsedTime = (double)(end - begin) / (double)CLOCKS_PER_SEC;
+    printf("Elapsed time: %f s\n", elapsedTime);
 }
 
 // Affiche le temps moyen écoulé lors de l'éxécution de l'algo

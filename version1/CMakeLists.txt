@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
-project(RK_Projet_v1)
-set(OUTPUT_NAME RK_Projet_v1)
+project(RK_Projet)
+set(OUTPUT_NAME RK_Projet)
 
 find_package(PkgConfig REQUIRED)
 find_package(OpenCV REQUIRED)

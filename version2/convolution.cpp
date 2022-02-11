@@ -1,7 +1,7 @@
 #include "convolution.hpp"
 
 // Applique le filtre de sobel X sur l'image
-void sobelX(Image* dest, const Kernel* kernel) {
+void sobelX(Image* dest, const Kernel* kernel, const float threshold) {
     // Copie temporaire des données de l'image
     Image* copy = copyImage(dest);
     int pixelX, pixelY, idPixel;
@@ -22,7 +22,7 @@ void sobelX(Image* dest, const Kernel* kernel) {
         convResult += kernel->data[6] * copy->getDataAtPixel(idPixel + copy->width - 1);
         convResult += kernel->data[8] * copy->getDataAtPixel(idPixel + copy->width + 1);
 
-        dest->data[idPixel] = (uchar) clampfs(convResult);
+        dest->data[idPixel] = (uchar) clampfs(convResult, threshold);
     }
 
     // On supprime la copie temporaire de l'image
@@ -30,7 +30,7 @@ void sobelX(Image* dest, const Kernel* kernel) {
 }
 
 // Applique le filtre de sobel Y sur l'image
-void sobelY(Image* dest, const Kernel* kernel) {
+void sobelY(Image* dest, const Kernel* kernel, const float threshold) {
     // Copie temporaire des données de l'image
     Image* copy = copyImage(dest);
     int pixelX, pixelY, idPixel;
@@ -50,7 +50,7 @@ void sobelY(Image* dest, const Kernel* kernel) {
         convResult += kernel->data[7] * copy->getDataAtPixel(idPixel + copy->width);
         convResult += kernel->data[8] * copy->getDataAtPixel(idPixel + copy->width + 1);
 
-        dest->data[idPixel] = (uchar) clampfs(convResult);
+        dest->data[idPixel] = (uchar) clampfs(convResult, threshold);
     }
 
     // On supprime la copie temporaire de l'image

@@ -1,19 +1,20 @@
 #include "sobel.hpp"
 
 void sobel(Image* image) {
-    Image* G0 = copyImage(image);
-    Image* G90 = copyImage(image);
+    Image* Gx = copyImage(image);
+    Image* Gy = copyImage(image);
 
     // On applique les filtres
-    sobelX(G0, &sobel0);
-    sobelY(G90, &sobel90);
+    const float threshold = 60;
+    sobelX(Gx, &sobel0, threshold);
+    sobelY(Gy, &sobel90, threshold);
 
     // Norme du gradient
-    const Image* gradients[2] = {G0, G90};
+    const Image* gradients[2] = {Gx, Gy};
     normGradient(image, gradients);
 
-    freeImage(G0);
-    freeImage(G90);
+    freeImage(Gx);
+    freeImage(Gy);
 }
 
 void normGradient(const Image* dest, const Image** gradients) {

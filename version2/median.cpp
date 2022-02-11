@@ -1,10 +1,5 @@
 #include "median.hpp"
 
-uchar getMedianValue(uchar kernel[], int n)
-{
-    return opt_med9(kernel);
-}
-
 void medianFilter(Image* dest)
 {
     Image* copy = copyImage(dest);
@@ -29,7 +24,7 @@ void medianFilter(Image* dest)
         kernel[7] = copy->getDataAtPixel(idPixel - copy->width + 1);
         kernel[8] = copy->getDataAtPixel(idPixel - copy->width - 1);
         
-        dest->data[i] = getMedianValue(kernel, 9);
+        dest->data[i] = opt_med9(kernel);
     }
 
     freeImage(copy);
