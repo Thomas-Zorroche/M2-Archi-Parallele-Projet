@@ -18,3 +18,4 @@ static const Kernel sobel135 = {dataSobel135, 3, 3};
 
 void sobel(Image* image);
 void normGradient(const Image* dest, const Image** gradients, const uint nbGradients);
+void normGradient_OPTI_1(const Image* dest, const Image** gradients);
