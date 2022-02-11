@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
 
 		// Apply Median Filter
     	chrono.start();
-		medianFilter_OPTI_1(&outputImage, 25);
+		medianFilter_OPTI_1(&outputImage, 5);
     	chrono.stop();
 
 		// Apply Sobel Filter

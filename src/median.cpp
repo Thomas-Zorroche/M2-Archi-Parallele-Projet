@@ -111,15 +111,22 @@ void medianFilter_OPTI_1(Image* image, int kernelSize)
 
     uchar kernel[(1 + (2 * kernelSize)) * (1 + (2 * kernelSize))];
     
-    int idKernel, idNeighbour, idPixel = 0;
-    //#pragma omp parallel for collapse(2)
+    int idKernel, idNeighbour, pixelX, pixelY, dX, dY = 0;
+    
+    static const uint halfWidth = kernelSize / 2;
     
     for(uint i = 0; i < image->height * image->width; ++i) 
     {
+        pixelX = i % image->width;
+        pixelY = i / image->width;
+
         idKernel = 0;
-        for (int kx = 0; kx <= kernelSize; kx++)
+        #pragma omp parallel for
+        for (int idKer = 0; idKer < kernelSize * kernelSize; idKer++)
         {
-            idNeighbour = i + ky + (kx * image->width);
+            dX = pixelX + (idKer % kernelSize) - halfWidth;
+            dY = pixelY + (idKer / kernelSize) - halfWidth;
+            idNeighbour = dY * step + dX;
             kernel[idKernel++] = image->getDataAtPixel(idNeighbour);
         }
         image->data[i] = getMedianValue(kernel, idKernel);
