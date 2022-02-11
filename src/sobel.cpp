@@ -3,8 +3,8 @@
 void sobel(Image* image) {
     Image* G0 = copyImage(image);
     Image* G90 = copyImage(image);
-    Image* G45 = copyImage(image);
-    Image* G135 = copyImage(image);
+    //Image* G45 = copyImage(image);
+    //Image* G135 = copyImage(image);
 
     // On applique les filtres
     // applyConv2dGray(G0, &sobel0);
@@ -14,18 +14,18 @@ void sobel(Image* image) {
 
     applyConv2dGray_OPTI_1(G0, &sobel0);
     applyConv2dGray_OPTI_1(G90, &sobel90);
-    applyConv2dGray_OPTI_1(G45, &sobel45);
-    applyConv2dGray_OPTI_1(G135, &sobel135);
+    //applyConv2dGray_OPTI_1(G45, &sobel45);
+    //applyConv2dGray_OPTI_1(G135, &sobel135);
 
     // Norme du gradient
-    const Image* gradients[4] = {G0, G90, G45, G135};
+    const Image* gradients[2] = { G0, G90 };
     // normGradient(image, gradients, 4);
     normGradient_OPTI_1(image, gradients); // Toujours utiliser 4 gradients
 
     freeImage(G0);
     freeImage(G90);
-    freeImage(G45);
-    freeImage(G135);
+    //freeImage(G45);
+    //freeImage(G135);
 }
 
 void normGradient(const Image* dest, const Image** gradients, const uint nbGradients) {
@@ -63,13 +63,13 @@ void normGradient_OPTI_1(const Image* dest, const Image** gradients) {
 
     for(uint i = 0; i < dest->height; ++i) {
         for(uint j = 0; j < dest->width; ++j) {
-            idPixel = i * step + j * chs;
+            idPixel = i * step + j;
 
             sumAbsGradients = 0.f;
             sumAbsGradients += std::abs(gradients[0]->data[idPixel]);
             sumAbsGradients += std::abs(gradients[1]->data[idPixel]);
-            sumAbsGradients += std::abs(gradients[2]->data[idPixel]);
-            sumAbsGradients += std::abs(gradients[3]->data[idPixel]);
+            //sumAbsGradients += std::abs(gradients[2]->data[idPixel]);
+            //sumAbsGradients += std::abs(gradients[3]->data[idPixel]);
             
             dest->data[idPixel] = (uchar) clampf(sumAbsGradients);
         }
