@@ -21,7 +21,7 @@ void applyConv2dGray(const Image* dest, const Kernel* kernel) {
 
     for (uint i = 0; i < dest->height; ++i) {
         for (uint j = 0; j < dest->width; ++j) {
-            const float convResult = conv2dGray(copy, {(float)j, (float)i}, kernel);
+            const float convResult = conv2dGray(copy, Coord((float)j, (float)i), kernel);
             // const float convResult = conv2dGray_OPTI_1(copy, {(float)j, (float)i}, kernel);
             dest->data[i * step + j] = (uchar) clampf(convResult);
         }

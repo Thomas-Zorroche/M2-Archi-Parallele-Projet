@@ -25,6 +25,7 @@ typedef struct Coord {
     float x;
     float y;
     float z = 0;
+    Coord(float _x, float _y, float _z = 0) { x = _x; y = _y; z = _z; }
 } Coord, Point, float3;
 
 typedef struct Kernel {
