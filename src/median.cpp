@@ -68,6 +68,26 @@ void bubbleSort(uchar arr[], int n)
   }
 }
 
+int ucharComparator ( const void * first, const void * second ) {
+    int firstInt = * (const uchar *) first;
+    int secondInt = * (const uchar *) second;
+    return firstInt - secondInt;
+}
+
+#define PIX_SORT(a,b) { if ((a)>(b)) PIX_SWAP((a),(b)); }
+#define PIX_SWAP(a,b) { uchar temp=(a);(a)=(b);(b)=temp; }
+
+uchar opt_med9(uchar * p)
+{
+    PIX_SORT(p[1], p[2]) ; PIX_SORT(p[4], p[5]) ; PIX_SORT(p[7], p[8]) ;
+    PIX_SORT(p[0], p[1]) ; PIX_SORT(p[3], p[4]) ; PIX_SORT(p[6], p[7]) ;
+    PIX_SORT(p[1], p[2]) ; PIX_SORT(p[4], p[5]) ; PIX_SORT(p[7], p[8]) ;
+    PIX_SORT(p[0], p[3]) ; PIX_SORT(p[5], p[8]) ; PIX_SORT(p[4], p[7]) ;
+    PIX_SORT(p[3], p[6]) ; PIX_SORT(p[1], p[4]) ; PIX_SORT(p[2], p[5]) ;
+    PIX_SORT(p[4], p[7]) ; PIX_SORT(p[4], p[2]) ; PIX_SORT(p[6], p[4]) ;
+    PIX_SORT(p[4], p[2]) ; return(p[4]) ;
+}
+
 uchar getMedianValue(uchar kernel[], int n)
 {
     // Bubble sort
@@ -75,11 +95,17 @@ uchar getMedianValue(uchar kernel[], int n)
     //return kernel[(int) (n / 2) + 1];
     
     // Quickselect
-    return kthSmallest(kernel, 0, n-1, (int) (n / 2) + 1);
+    //return kthSmallest(kernel, 0, n-1, (int) (n / 2) + 1);
+
+    //qsort(&kernel[0], n, sizeof(uchar), ucharComparator);
+    //return kernel[(int) (n / 2)];
+
+    return opt_med9(kernel);
 }
 
-void medianFilter(Image* image, Chrono& chrono, int kernelSize)
+void medianFilter(Image* image)
 {
+    int kernelSize = 3;
     const int step = image->width;
 
     uchar kernel[(1 + (2 * kernelSize)) * (1 + (2 * kernelSize))];
@@ -105,30 +131,29 @@ void medianFilter(Image* image, Chrono& chrono, int kernelSize)
     }
 }
 
-void medianFilter_OPTI_1(Image* image, int kernelSize)
+void medianFilter_OPTI_1(Image* image)
 {
-    const int step = image->width;
-
-    uchar kernel[(1 + (2 * kernelSize)) * (1 + (2 * kernelSize))];
-    
-    int idKernel, idNeighbour, pixelX, pixelY, dX, dY = 0;
-    
-    static const uint halfWidth = kernelSize / 2;
+    uchar kernel[(1 + (2 * 3 /* kernelsize */)) * (1 + (2 * 3 /* kernelsize */))];
+    int idPixel, pixelX, pixelY = 0;
     
     for(uint i = 0; i < image->height * image->width; ++i) 
     {
         pixelX = i % image->width;
         pixelY = i / image->width;
+        idPixel = pixelY * image->width + pixelX;
+        
+        kernel[0] = image->getDataAtPixel(idPixel);
+        kernel[1] = image->getDataAtPixel(idPixel + 1);
+        kernel[2] = image->getDataAtPixel(idPixel - 1);
 
-        idKernel = 0;
-        #pragma omp parallel for
-        for (int idKer = 0; idKer < kernelSize * kernelSize; idKer++)
-        {
-            dX = pixelX + (idKer % kernelSize) - halfWidth;
-            dY = pixelY + (idKer / kernelSize) - halfWidth;
-            idNeighbour = dY * step + dX;
-            kernel[idKernel++] = image->getDataAtPixel(idNeighbour);
-        }
-        image->data[i] = getMedianValue(kernel, idKernel);
+        kernel[3] = image->getDataAtPixel(idPixel + image->width);
+        kernel[4] = image->getDataAtPixel(idPixel + image->width + 1);
+        kernel[5] = image->getDataAtPixel(idPixel + image->width - 1);
+
+        kernel[6] = image->getDataAtPixel(idPixel - image->width);
+        kernel[7] = image->getDataAtPixel(idPixel - image->width + 1);
+        kernel[8] = image->getDataAtPixel(idPixel - image->width - 1);
+        
+        image->data[i] = getMedianValue(kernel, 9);
     }
 }

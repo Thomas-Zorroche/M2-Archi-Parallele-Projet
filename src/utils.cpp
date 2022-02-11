@@ -21,8 +21,8 @@ void applyConv2dGray(const Image* dest, const Kernel* kernel) {
 
     for (uint i = 0; i < dest->height; ++i) {
         for (uint j = 0; j < dest->width; ++j) {
-            const float convResult = conv2dGray(copy, Coord((float)j, (float)i), kernel);
-            // const float convResult = conv2dGray_OPTI_1(copy, {(float)j, (float)i}, kernel);
+            //const float convResult = conv2dGray(copy, Coord((float)j, (float)i), kernel);
+            const float convResult = conv2dGray_OPTI_1(copy, Coord((float)j, (float)i), kernel);
             dest->data[i * step + j] = (uchar) clampf(convResult);
         }
     }
@@ -81,6 +81,7 @@ float conv2dGray_OPTI_1(const Image* image, const Coord pixel, const Kernel* ker
     const uint halfWidth = kernelWidth / 2;
     const uint halfHeight = kernelHeight / 2;
 
+    
     for (uint idKer = 0; idKer < kernelHeight * kernelWidth; ++idKer) {
         int dX = pixel.x + (idKer % kernelWidth) - halfWidth;
         int dY = pixel.y + (idKer / kernelHeight) - halfHeight;

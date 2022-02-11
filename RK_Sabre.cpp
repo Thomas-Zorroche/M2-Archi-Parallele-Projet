@@ -10,7 +10,7 @@
 // adapter la ligne :
 //     capture = cvCreateCameraCapture( 4 );
 //
-// Compilation : g++ `pkg-config opencv --cflags` ./RK_Sabre.cpp ./src/utils.cpp ./src/sobel.cpp ./src/median.cpp ./src/chrono.cpp -o RK_Projet `pkg-config opencv --libs`
+// Compilation : g++ `pkg-config opencv --cflags` ./RK_Sabre.cpp ./src/utils.cpp ./src/sobel.cpp ./src/median.cpp ./src/chrono.cpp -o RK_Projet `pkg-config opencv --libs -std=c++14`
 
 /*
  * Code written by Vinz (GeckoGeek.fr) 14/03/2010
@@ -107,9 +107,11 @@ int main(int argc, char* argv[])
 		getGrayScaleImage(&inputImage, &outputImage);
 
 		// Apply Median Filter
-    	chrono.start();
-		medianFilter_OPTI_1(&outputImage, 5);
-    	chrono.stop();
+		chrono.start();
+		medianFilter_OPTI_1(&outputImage);
+		chrono.stop();
+
+		printf("%d\n", framesCounter);
 
 		// Apply Sobel Filter
 		sobel(&outputImage);
