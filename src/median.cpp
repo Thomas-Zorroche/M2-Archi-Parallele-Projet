@@ -134,11 +134,12 @@ void medianFilter(Image* image)
 
 void medianFilter_OPTI_1(Image* image)
 {
+    Image* copy = copyImage(image);
     uchar kernel[(1 + (2 * 3 /* kernelsize */)) * (1 + (2 * 3 /* kernelsize */))];
     int idPixel, pixelX, pixelY = 0;
     
     int size = image->height * image->width;
-    uint size_per_thread = size / 2;
+    uint size_per_thread = size / (float)omp_get_max_threads();
     int id;
 
     #pragma omp parallel shared (size_per_thread, size) private(id)
@@ -152,20 +153,22 @@ void medianFilter_OPTI_1(Image* image)
             pixelY = ((size_per_thread * id) + i) / image->width;
             idPixel = pixelY * image->width + pixelX;
             
-            kernel[0] = image->getDataAtPixel(idPixel);
-            kernel[1] = image->getDataAtPixel(idPixel + 1);
-            kernel[2] = image->getDataAtPixel(idPixel - 1);
+            kernel[0] = copy->getDataAtPixel(idPixel);
+            kernel[1] = copy->getDataAtPixel(idPixel + 1);
+            kernel[2] = copy->getDataAtPixel(idPixel - 1);
 
-            kernel[3] = image->getDataAtPixel(idPixel + image->width);
-            kernel[4] = image->getDataAtPixel(idPixel + image->width + 1);
-            kernel[5] = image->getDataAtPixel(idPixel + image->width - 1);
+            kernel[3] = copy->getDataAtPixel(idPixel + copy->width);
+            kernel[4] = copy->getDataAtPixel(idPixel + copy->width + 1);
+            kernel[5] = copy->getDataAtPixel(idPixel + copy->width - 1);
 
-            kernel[6] = image->getDataAtPixel(idPixel - image->width);
-            kernel[7] = image->getDataAtPixel(idPixel - image->width + 1);
-            kernel[8] = image->getDataAtPixel(idPixel - image->width - 1);
+            kernel[6] = copy->getDataAtPixel(idPixel - copy->width);
+            kernel[7] = copy->getDataAtPixel(idPixel - copy->width + 1);
+            kernel[8] = copy->getDataAtPixel(idPixel - copy->width - 1);
             
             image->data[i] = getMedianValue(kernel, 9);
         }
     }
     #pragma omp barrier // Wait for all threads to complete
+
+    freeImage(copy);
 }
