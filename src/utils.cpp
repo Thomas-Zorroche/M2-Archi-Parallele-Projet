@@ -21,7 +21,7 @@ void applyConv2dGray(const Image* dest, const Kernel* kernel) {
 
     for (uint i = 0; i < dest->height; ++i) {
         for (uint j = 0; j < dest->width; ++j) {
-            //const float convResult = conv2dGray(copy, Coord((float)j, (float)i), kernel);
+            // const float convResult = conv2dGray(copy, Coord((float)j, (float)i), kernel);
             const float convResult = conv2dGray_OPTI_1(copy, Coord((float)j, (float)i), kernel);
             dest->data[i * step + j] = (uchar) clampf(convResult);
         }
@@ -68,40 +68,21 @@ float conv2dGray(const Image* image, const Coord pixel, const Kernel* kernel) {
     return sum;
 }
 
-float conv2dGray_OPTI_1(const Image* image, const Coord pixel, const Kernel* kernel) {
-    const uint kernelWidth = kernel->width;
-    const uint kernelHeight = kernel->height;
-    const int width = image->width;
-    const int height = image->height;
-    const uint chs = image->channels;
-    const uint step = image->width * chs * sizeof(uchar);
+float conv2dGray_OPTI_1(Image* image, const Coord pixel, const Kernel* kernel) {
+    float sum = 0;
+    uint idPixel = pixel.y * image->width + pixel.x;
 
-    float sum = 0.0f;
+    sum += kernel->data[0] * image->getDataAtPixel(idPixel);
+    sum += kernel->data[1] * image->getDataAtPixel(idPixel + 1);
+    sum += kernel->data[2] * image->getDataAtPixel(idPixel - 1);
 
-    const uint halfWidth = kernelWidth / 2;
-    const uint halfHeight = kernelHeight / 2;
+    sum += kernel->data[3] * image->getDataAtPixel(idPixel + image->width);
+    sum += kernel->data[4] * image->getDataAtPixel(idPixel + image->width + 1);
+    sum += kernel->data[5] * image->getDataAtPixel(idPixel + image->width - 1);
 
-    
-    for (uint idKer = 0; idKer < kernelHeight * kernelWidth; ++idKer) {
-        int dX = pixel.x + (idKer % kernelWidth) - halfWidth;
-        int dY = pixel.y + (idKer / kernelHeight) - halfHeight;
-
-        // Handle borders
-        if (dX < 0)
-            dX = 0;
-
-        if (dX >= width)
-            dX = width - 1;
-
-        if (dY < 0) 
-            dY = 0;
-
-        if (dY >= height)
-            dY = height - 1;
-
-        const uint idPixel = dY * step + dX;
-        sum += image->data[idPixel] * kernel->data[idKer];
-    }
+    sum += kernel->data[6] * image->getDataAtPixel(idPixel - image->width);
+    sum += kernel->data[7] * image->getDataAtPixel(idPixel - image->width + 1);
+    sum += kernel->data[8] * image->getDataAtPixel(idPixel - image->width - 1);
 
     return sum;
 }

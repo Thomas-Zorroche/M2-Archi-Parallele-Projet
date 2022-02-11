@@ -108,14 +108,12 @@ int main(int argc, char* argv[])
 		getGrayScaleImage(&inputImage, &outputImage);
 
 		// Apply Median Filter
-		//chrono.start();
 		medianFilter_OPTI_1(&outputImage);
-		//chrono.stop();
-
-		printf("%d\n", framesCounter);
 
 		// Apply Sobel Filter
+		// chrono.start();
 		sobel(&outputImage);
+		// chrono.stop();
 
 		// On affiche l'Image_IN dans une fenêtre
 		cvShowImage("Image_IN_Window", Image_IN);
@@ -125,12 +123,13 @@ int main(int argc, char* argv[])
 		// On attend 5ms
 		ESC_keyboard = cvWaitKey(5);
 
+		printf("%d\n", framesCounter);
 		// Mise à jour du compteur de frames (sauf si 0 est sélectionné)
 		if(!(numberOfFrames == 0)) framesCounter++;
     }
 	chrono.stop();
 
-	chrono.printMeanTime();
+	chrono.printElapsedTime();
 
 	// Fermeture de l'acquisition Vidéo
 	cvReleaseCapture(&capture);

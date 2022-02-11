@@ -38,8 +38,8 @@ void getGrayScaleImage(const Image* imageIn, Image* imageOut);
 
 void applyConv2dGray(const Image* image, const Kernel* kernel);
 
-float conv2dGray(const Image* dest, const Coord pixel, const Kernel* kernel);
-float conv2dGray_OPTI_1(const Image* image, const Coord pixel, const Kernel* kernel);
+float conv2dGray(const Image* image, const Coord pixel, const Kernel* kernel);
+float conv2dGray_OPTI_1(Image* image, const Coord pixel, const Kernel* kernel);
 
 Image* copyImage(const Image* image);
 void freeImage(Image* image);
