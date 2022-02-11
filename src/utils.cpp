@@ -43,13 +43,13 @@ void applyConv2dGray_OPTI_1(Image* dest, const Kernel* kernel) {
         idPixel = pixelY * dest->width + pixelX;
         convResult = 0;
 
-        convResult += kernel->data[0] * copy->getDataAtPixel(idPixel);
-        convResult += kernel->data[1] * copy->getDataAtPixel(idPixel + 1);
-        convResult += kernel->data[2] * copy->getDataAtPixel(idPixel - 1);
+        convResult += kernel->data[3] * copy->getDataAtPixel(idPixel);
+        convResult += kernel->data[4] * copy->getDataAtPixel(idPixel + 1);
+        convResult += kernel->data[5] * copy->getDataAtPixel(idPixel - 1);
 
-        convResult += kernel->data[3] * copy->getDataAtPixel(idPixel + copy->width);
-        convResult += kernel->data[4] * copy->getDataAtPixel(idPixel + copy->width + 1);
-        convResult += kernel->data[5] * copy->getDataAtPixel(idPixel + copy->width - 1);
+        convResult += kernel->data[0] * copy->getDataAtPixel(idPixel + copy->width);
+        convResult += kernel->data[1] * copy->getDataAtPixel(idPixel + copy->width + 1);
+        convResult += kernel->data[2] * copy->getDataAtPixel(idPixel + copy->width - 1);
 
         convResult += kernel->data[6] * copy->getDataAtPixel(idPixel - copy->width);
         convResult += kernel->data[7] * copy->getDataAtPixel(idPixel - copy->width + 1);
@@ -103,13 +103,13 @@ float conv2dGray_OPTI_1(Image* image, const Coord pixel, const Kernel* kernel) {
     float sum = 0;
     uint idPixel = pixel.y * image->width + pixel.x;
 
-    sum += kernel->data[0] * image->getDataAtPixel(idPixel);
-    sum += kernel->data[1] * image->getDataAtPixel(idPixel + 1);
-    sum += kernel->data[2] * image->getDataAtPixel(idPixel - 1);
+    sum += kernel->data[3] * image->getDataAtPixel(idPixel);
+    sum += kernel->data[4] * image->getDataAtPixel(idPixel + 1);
+    sum += kernel->data[5] * image->getDataAtPixel(idPixel - 1);
 
-    sum += kernel->data[3] * image->getDataAtPixel(idPixel + image->width);
-    sum += kernel->data[4] * image->getDataAtPixel(idPixel + image->width + 1);
-    sum += kernel->data[5] * image->getDataAtPixel(idPixel + image->width - 1);
+    sum += kernel->data[0] * image->getDataAtPixel(idPixel + image->width);
+    sum += kernel->data[1] * image->getDataAtPixel(idPixel + image->width + 1);
+    sum += kernel->data[2] * image->getDataAtPixel(idPixel + image->width - 1);
 
     sum += kernel->data[6] * image->getDataAtPixel(idPixel - image->width);
     sum += kernel->data[7] * image->getDataAtPixel(idPixel - image->width + 1);
