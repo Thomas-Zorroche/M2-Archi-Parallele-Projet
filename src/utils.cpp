@@ -62,44 +62,6 @@ void applyConv2dGray_OPTI_1(Image* dest, const Kernel* kernel) {
     freeImage(copy);
 }
 
-void applyConv2dGray_OPTI_2(Image* dest, const Kernel* kernelA, const Kernel* kernelB) {
-    // Copie temporaire des données de l'image
-    float* copy = allocateFloatDataImage(dest);
-    int pixelX, pixelY, idPixel;
-    float convResult;
-
-    // Horizontal kernel
-    for (uint i = 0; i < dest->height * dest->width; ++i) {
-        pixelX = i % dest->width;
-        pixelY = i / dest->width;
-        idPixel = pixelY * dest->width + pixelX;
-        convResult = 0;
-
-        convResult += kernelA->data[0] * dest->getDataAtPixel(idPixel - 1);
-        convResult += kernelA->data[1] * dest->getDataAtPixel(idPixel);
-        convResult += kernelA->data[2] * dest->getDataAtPixel(idPixel + 1);
-
-        copy[idPixel] = convResult; // Ne pas clamp ici !
-    }
-
-    // Vertical kernel
-    for (uint i = 0; i < dest->height * dest->width; ++i) {
-        pixelX = i % dest->width;
-        pixelY = i / dest->width;
-        idPixel = pixelY * dest->width + pixelX;
-        convResult = 0;
-
-        convResult += kernelB->data[0] * getDataAtPixel(copy, idPixel - dest->width, dest->width, dest->height);
-        convResult += kernelB->data[1] * getDataAtPixel(copy, idPixel, dest->width, dest->height);
-        convResult += kernelB->data[2] * getDataAtPixel(copy, idPixel + dest->width, dest->width, dest->height);
-
-        dest->data[idPixel] = (uchar) clampfs(convResult);
-    }
-
-    // On supprime la copie temporaire de l'image
-    free(copy);
-}
-
 float conv2dGray(const Image* image, const Coord pixel, const Kernel* kernel) {
     const uint kernelWidth = kernel->width;
     const uint kernelHeight = kernel->height;
@@ -176,19 +138,6 @@ Image* copyImage(const Image* image) {
     return copy;
 }
 
-float* allocateFloatDataImage(const Image* image) {
-    float* copy = nullptr;
-    const size_t length = image->width * image->height * image->channels;
-    const size_t bytes = sizeof(float) * length;
-    copy = (float*) malloc(bytes);
-    return copy;
-}
-
-float getDataAtPixel(const float* data, int idPixel, const int width, const int height) {
-    static const int numPixels = width * height;
-    return (idPixel >= numPixels || idPixel < 0) ? 0 : data[idPixel];
-}
-
 void freeImage(Image* image) {
     free(image->data);
     free(image);
@@ -206,4 +155,59 @@ float clampf(const float value, const float max, const float min) {
 
 float clampfs(const float value, const float threshold, const float max, const float min) {
     return (value >= threshold) ? max : min;
+}
+
+void sobelX(Image* dest, const Kernel* kernel) {
+    // Copie temporaire des données de l'image
+    Image* copy = copyImage(dest);
+    int pixelX, pixelY, idPixel;
+    float convResult;
+
+    for (uint i = 0; i < dest->height * dest->width; ++i) {
+        pixelX = i % dest->width;
+        pixelY = i / dest->width;
+        idPixel = pixelY * dest->width + pixelX;
+        convResult = 0.0f;
+
+        convResult += kernel->data[0] * copy->getDataAtPixel(idPixel - copy->width - 1);
+        convResult += kernel->data[2] * copy->getDataAtPixel(idPixel - copy->width + 1);
+
+        convResult += kernel->data[3] * copy->getDataAtPixel(idPixel - 1);
+        convResult += kernel->data[5] * copy->getDataAtPixel(idPixel + 1);
+
+        convResult += kernel->data[6] * copy->getDataAtPixel(idPixel + copy->width - 1);
+        convResult += kernel->data[8] * copy->getDataAtPixel(idPixel + copy->width + 1);
+
+        dest->data[idPixel] = (uchar) clampfs(convResult);
+    }
+
+    // On supprime la copie temporaire de l'image
+    freeImage(copy);
+}
+
+void sobelY(Image* dest, const Kernel* kernel) {
+    // Copie temporaire des données de l'image
+    Image* copy = copyImage(dest);
+    int pixelX, pixelY, idPixel;
+    float convResult;
+
+    for (uint i = 0; i < dest->height * dest->width; ++i) {
+        pixelX = i % dest->width;
+        pixelY = i / dest->width;
+        idPixel = pixelY * dest->width + pixelX;
+        convResult = 0.0f;
+
+        convResult += kernel->data[0] * copy->getDataAtPixel(idPixel - copy->width - 1);
+        convResult += kernel->data[1] * copy->getDataAtPixel(idPixel - copy->width);
+        convResult += kernel->data[2] * copy->getDataAtPixel(idPixel - copy->width + 1);
+
+        convResult += kernel->data[6] * copy->getDataAtPixel(idPixel + copy->width - 1);
+        convResult += kernel->data[7] * copy->getDataAtPixel(idPixel + copy->width);
+        convResult += kernel->data[8] * copy->getDataAtPixel(idPixel + copy->width + 1);
+
+        dest->data[idPixel] = (uchar) clampfs(convResult);
+    }
+
+    // On supprime la copie temporaire de l'image
+    freeImage(copy);
 }

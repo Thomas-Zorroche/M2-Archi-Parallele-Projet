@@ -138,15 +138,15 @@ void medianFilter_OPTI_1(Image* image)
     int idPixel, pixelX, pixelY = 0;
     
     int size = image->height * image->width;
-    int size_per_thread = size / 2;
+    uint size_per_thread = size / 2;
     int id;
 
     #pragma omp parallel shared (size_per_thread, size) private(id)
     {
-        id = omp_get_thread_num();         // Get current thread number
+        id = omp_get_thread_num(); // Get current thread number
         
         #pragma omp for
-        for(uint i = 0; i < size_per_thread; ++i) 
+        for(uint i = 0; i < size_per_thread; ++i)
         {
             pixelX = ((size_per_thread * id) + i) % image->width;
             pixelY = ((size_per_thread * id) + i) / image->width;
@@ -167,5 +167,5 @@ void medianFilter_OPTI_1(Image* image)
             image->data[i] = getMedianValue(kernel, 9);
         }
     }
-    #pragma omp barrier                    // Wait for all threads to complete
+    #pragma omp barrier // Wait for all threads to complete
 }

@@ -95,6 +95,7 @@ int main(int argc, char* argv[])
 	Image outputImage 	= {nullptr, (uint)Image_OUT->height, (uint)Image_OUT->width, Image_OUT->nChannels};
 
 	// Boucle tant que l'utilisateur n'appuie pas sur la touche q (ou Q)
+	chrono.start();
     while(ESC_keyboard != 'q' && ESC_keyboard != 'Q' && framesCounter <= numberOfFrames) {
  
 		// On récupère une Image_IN
@@ -107,9 +108,7 @@ int main(int argc, char* argv[])
 		getGrayScaleImage(&inputImage, &outputImage);
 
 		// Apply Median Filter
-		chrono.start();
 		medianFilter_OPTI_1(&outputImage);
-		chrono.stop();
 
 		// Apply Sobel Filter
 		sobel(&outputImage);
@@ -126,7 +125,7 @@ int main(int argc, char* argv[])
 		// Mise à jour du compteur de frames (sauf si 0 est sélectionné)
 		if(!(numberOfFrames == 0)) framesCounter++;
     }
-
+	chrono.stop();
 	chrono.printElapsedTime();
 
 	// Fermeture de l'acquisition Vidéo

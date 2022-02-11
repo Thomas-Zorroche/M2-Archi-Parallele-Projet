@@ -7,18 +7,8 @@ void sobel(Image* image) {
     // Image* G135 = copyImage(image);
 
     // On applique les filtres
-    // applyConv2dGray(G0, &sobel0);
-    // applyConv2dGray(G90, &sobel90);
-    // applyConv2dGray(G45, &sobel45);
-    // applyConv2dGray(G135, &sobel135);
-
-    // applyConv2dGray_OPTI_1(G0, &sobel0);
-    // applyConv2dGray_OPTI_1(G90, &sobel90);
-    // applyConv2dGray_OPTI_1(G45, &sobel45);
-    // applyConv2dGray_OPTI_1(G135, &sobel135);
-
-    applyConv2dGray_OPTI_2(G0, &sobel0A, &sobel0B);
-    applyConv2dGray_OPTI_2(G90, &sobel90A, &sobel90B);
+    sobelX(G0, &sobel0);
+    sobelY(G90, &sobel90);
 
     // Norme du gradient
     const Image* gradients[2] = {G0, G90};

@@ -43,11 +43,11 @@ void applyConv2dGray_OPTI_2(Image* dest, const Kernel* kernelA, const Kernel* ke
 float conv2dGray(const Image* image, const Coord pixel, const Kernel* kernel);
 float conv2dGray_OPTI_1(Image* image, const Coord pixel, const Kernel* kernel);
 
+void sobelX(Image* dest, const Kernel* kernel);
+void sobelY(Image* dest, const Kernel* kernel);
+
 Image* copyImage(const Image* image);
 void freeImage(Image* image);
-
-float* allocateFloatDataImage(const Image* image);
-float getDataAtPixel(const float* data, int idPixel, const int width, const int height);
 
 float clampf(const float value, const float max = 255, const float min = 0);
 float clampfs(const float value, const float threshold = 30, const float max = 255, const float min = 0);
