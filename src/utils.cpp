@@ -23,7 +23,7 @@ void applyConv2dGray(const Image* dest, const Kernel* kernel) {
         for (uint j = 0; j < dest->width; ++j) {
             // const float convResult = conv2dGray(copy, Coord((float)j, (float)i), kernel);
             const float convResult = conv2dGray_OPTI_1(copy, Coord((float)j, (float)i), kernel);
-            dest->data[i * step + j] = (uchar) clampf(convResult);
+            dest->data[i * step + j] = (uchar) clampfs(convResult);
         }
     }
 
@@ -55,7 +55,7 @@ void applyConv2dGray_OPTI_1(Image* dest, const Kernel* kernel) {
         convResult += kernel->data[7] * copy->getDataAtPixel(idPixel - copy->width + 1);
         convResult += kernel->data[8] * copy->getDataAtPixel(idPixel - copy->width - 1);
 
-        dest->data[idPixel] = (uchar) clampf(convResult);
+        dest->data[idPixel] = (uchar) clampfs(convResult);
     }
 
     // On supprime la copie temporaire de l'image
@@ -150,4 +150,8 @@ uchar Image::getDataAtPixel(int idPixel)
 
 float clampf(const float value, const float max, const float min) {
     return (value <= min ? min : (value >= max ? max : value));
+}
+
+float clampfs(const float value, const float threshold, const float max, const float min) {
+    return (value >= threshold) ? max : min;
 }

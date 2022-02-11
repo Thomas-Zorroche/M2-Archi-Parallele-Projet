@@ -46,3 +46,4 @@ Image* copyImage(const Image* image);
 void freeImage(Image* image);
 
 float clampf(const float value, const float max = 255, const float min = 0);
+float clampfs(const float value, const float threshold = 128, const float max = 255, const float min = 0);
