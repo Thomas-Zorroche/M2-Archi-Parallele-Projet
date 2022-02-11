@@ -31,6 +31,37 @@ void applyConv2dGray(const Image* dest, const Kernel* kernel) {
     freeImage(copy);
 }
 
+void applyConv2dGray_OPTI_1(Image* dest, const Kernel* kernel) {
+    // Copie temporaire des données de l'image
+    Image* copy = copyImage(dest);
+    int pixelX, pixelY, idPixel;
+    float convResult;
+
+    for (uint i = 0; i < dest->height * dest->width; ++i) {
+        pixelX = i % dest->width;
+        pixelY = i / dest->width;
+        idPixel = pixelY * dest->width + pixelX;
+        convResult = 0;
+
+        convResult += kernel->data[0] * copy->getDataAtPixel(idPixel);
+        convResult += kernel->data[1] * copy->getDataAtPixel(idPixel + 1);
+        convResult += kernel->data[2] * copy->getDataAtPixel(idPixel - 1);
+
+        convResult += kernel->data[3] * copy->getDataAtPixel(idPixel + copy->width);
+        convResult += kernel->data[4] * copy->getDataAtPixel(idPixel + copy->width + 1);
+        convResult += kernel->data[5] * copy->getDataAtPixel(idPixel + copy->width - 1);
+
+        convResult += kernel->data[6] * copy->getDataAtPixel(idPixel - copy->width);
+        convResult += kernel->data[7] * copy->getDataAtPixel(idPixel - copy->width + 1);
+        convResult += kernel->data[8] * copy->getDataAtPixel(idPixel - copy->width - 1);
+
+        dest->data[idPixel] = (uchar) clampf(convResult);
+    }
+
+    // On supprime la copie temporaire de l'image
+    freeImage(copy);
+}
+
 float conv2dGray(const Image* image, const Coord pixel, const Kernel* kernel) {
     const uint kernelWidth = kernel->width;
     const uint kernelHeight = kernel->height;

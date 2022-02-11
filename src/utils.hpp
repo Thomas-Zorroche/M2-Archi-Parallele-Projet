@@ -37,6 +37,7 @@ typedef struct Kernel {
 void getGrayScaleImage(const Image* imageIn, Image* imageOut);
 
 void applyConv2dGray(const Image* image, const Kernel* kernel);
+void applyConv2dGray_OPTI_1(Image* dest, const Kernel* kernel);
 
 float conv2dGray(const Image* image, const Coord pixel, const Kernel* kernel);
 float conv2dGray_OPTI_1(Image* image, const Coord pixel, const Kernel* kernel);
