@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 	IplImage *Image_OUT;
 
 	// Outils pour la mesure des temps
-	Chrono chrono;
+	Chrono chrono(NUM_THREADS);
 		
 	// Capture vidéo
 	CvCapture *capture;
@@ -100,6 +100,7 @@ int main(int argc, char* argv[])
 
 	// Boucle tant que l'utilisateur n'appuie pas sur la touche q (ou Q)
 	chrono.start();
+	printf("START Chrono\n");
     while(ESC_keyboard != 'q' && ESC_keyboard != 'Q' && framesCounter <= numberOfFrames) {
  
 		// On récupère une Image_IN
@@ -132,6 +133,7 @@ int main(int argc, char* argv[])
 		}
     }
 	chrono.stop();
+	printf("STOP Chrono\n");
 	chrono.printElapsedSeconds();
 
 	// Fermeture de l'acquisition Vidéo

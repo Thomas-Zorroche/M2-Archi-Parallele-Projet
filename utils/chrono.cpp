@@ -6,19 +6,19 @@ void Chrono::start() {
 
 void Chrono::stop() {
     end = clock();
-    times += (double)(end - begin) / (double)CLOCKS_PER_SEC * 1000.0;
+    times += (double)(end - begin) / (double)clocksPerSecond * 1000.0;
     nbTimes++;
 }
 
 // Affiche le temps écoulé en ms
 void Chrono::printElapsedMSeconds() {
-    double elapsedTime = (double)(end - begin) / (double)CLOCKS_PER_SEC * 1000.0;
+    double elapsedTime = (double)(end - begin) / (double)clocksPerSecond * 1000.0;
     printf("Elapsed time: %f ms\n", elapsedTime);
 }
 
 // Affiche le temps écoulé en s
 void Chrono::printElapsedSeconds() {
-    double elapsedTime = (double)(end - begin) / (double)CLOCKS_PER_SEC;
+    double elapsedTime = (double)(end - begin) / (double)clocksPerSecond;
     printf("Elapsed time: %f s\n", elapsedTime);
 }
 
