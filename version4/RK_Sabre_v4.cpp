@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
 		medianFilter(&outputImage);
 
 		// Apply Sobel Filter
-		sobel(&outputImage);
+		sobel(&outputImage, 95);
 
 		// On affiche l'Image_IN dans une fenêtre
 		cvShowImage("Image_IN_Window", Image_IN);

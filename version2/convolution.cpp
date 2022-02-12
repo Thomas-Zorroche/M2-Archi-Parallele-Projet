@@ -9,9 +9,8 @@ void sobelX(Image* image, float* Gx, const Kernel* kernel) {
         pixelX = i % image->width;
         pixelY = i / image->width;
         idPixel = pixelY * image->width + pixelX;
-        convResult = 0.0f;
 
-        convResult += kernel->data[0] * image->getDataAtPixel(idPixel - image->width - 1);
+        convResult  = kernel->data[0] * image->getDataAtPixel(idPixel - image->width - 1);
         convResult += kernel->data[2] * image->getDataAtPixel(idPixel - image->width + 1);
 
         convResult += kernel->data[3] * image->getDataAtPixel(idPixel - 1);
@@ -33,9 +32,8 @@ void sobelY(Image* image, float* Gy, const Kernel* kernel) {
         pixelX = i % image->width;
         pixelY = i / image->width;
         idPixel = pixelY * image->width + pixelX;
-        convResult = 0.0f;
 
-        convResult += kernel->data[0] * image->getDataAtPixel(idPixel - image->width - 1);
+        convResult  = kernel->data[0] * image->getDataAtPixel(idPixel - image->width - 1);
         convResult += kernel->data[1] * image->getDataAtPixel(idPixel - image->width);
         convResult += kernel->data[2] * image->getDataAtPixel(idPixel - image->width + 1);
 

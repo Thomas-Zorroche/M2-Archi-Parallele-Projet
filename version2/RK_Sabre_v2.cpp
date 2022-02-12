@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
 		medianFilter(&outputImage);
 
 		// Apply Sobel Filter
-		sobel(&outputImage);
+		sobel(&outputImage, 95);
 
 		// On affiche l'Image_IN dans une fenêtre
 		cvShowImage("Image_IN_Window", Image_IN);
@@ -121,9 +121,11 @@ int main(int argc, char* argv[])
 		// On attend 5ms
 		ESC_keyboard = cvWaitKey(5);
 
-		printf("%d\n", framesCounter);
 		// Mise à jour du compteur de frames (sauf si 0 est sélectionné)
-		if(!(numberOfFrames == 0)) framesCounter++;
+		if(!(numberOfFrames == 0)) {
+			// printf("%d\n", framesCounter);
+			framesCounter++;
+		}
     }
 	chrono.stop();
 	chrono.printElapsedSeconds();

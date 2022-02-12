@@ -1,6 +1,6 @@
 #include "sobel.hpp"
 
-void sobel(Image* image) {
+void sobel(Image* image, const float threshold) {
     float* Gx = (float*) malloc(sizeof(float) * image->width * image->height);
     float* Gy = (float*) malloc(sizeof(float) * image->width * image->height);
 
@@ -10,7 +10,7 @@ void sobel(Image* image) {
 
     // Norme du gradient
     const float* gradients[2] = {Gx, Gy};
-    normGradient(image, gradients, 80);
+    normGradient(image, gradients, threshold);
 
     free(Gx);
     free(Gy);
@@ -26,7 +26,7 @@ void normGradient(const Image* dest, const float** gradients, const float thresh
         for(uint j = 0; j < dest->width; ++j) {
             idPixel = i * step + j;
 
-            sumAbsGradients = std::abs(gradients[0][idPixel]);
+            sumAbsGradients  = std::abs(gradients[0][idPixel]);
             sumAbsGradients += std::abs(gradients[1][idPixel]);
             
             dest->data[idPixel] = (uchar) clampfs(sumAbsGradients, threshold);
