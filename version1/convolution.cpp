@@ -1,20 +1,15 @@
 #include "convolution.hpp"
 
 //  Convolution sur l'image entière
-void applyConv2D(const Image* dest, const Kernel* kernel) {
-    // Copie temporaire des données de l'image
-    Image* copy = copyImage(dest);
+void applyConv2D(Image* dest, float* gradient, const Kernel* kernel) {
     const int step = dest->width * dest->channels * sizeof(uchar);
 
     for (uint i = 0; i < dest->height; ++i) {
         for (uint j = 0; j < dest->width; ++j) {
-            const float convResult = conv2D(copy, Coord((float)j, (float)i), kernel);
-            dest->data[i * step + j] = (uchar) clampfs(convResult);
+            const float convResult = conv2D(dest, Coord((float)j, (float)i), kernel);
+            gradient[i * step + j] = convResult;
         }
     }
-
-    // On supprime la copie temporaire de l'image
-    freeImage(copy);
 }
 
 //  Convolution pour 1 pixel

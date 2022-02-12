@@ -4,7 +4,7 @@ uchar getMedianValue(uchar kernel[], int n)
 {
     // Bubble sort
     bubbleSort(kernel, n);
-    return kernel[(int) (n / 2) + 1];
+    return kernel[(int) (n / 2)];
     
     // Quickselect
     // return kthSmallest(kernel, 0, n-1, (int) (n / 2) + 1);
@@ -15,15 +15,15 @@ uchar getMedianValue(uchar kernel[], int n)
 
 void medianFilter(Image* image)
 {
-    int kernelSize = 3;
+    int kernelSize = 1; // 1 --> Correspond à un kernel de 3 * 3
     const int step = image->width;
 
     uchar kernel[(1 + (2 * kernelSize)) * (1 + (2 * kernelSize))];
     
     int idKernel, idNeighbour, idPixel = 0;
-    for(uint i = 0; i < image->height; ++i) 
+    for(uint i = 0; i < image->height; ++i)
     {
-        for(uint j = 0; j < image->width; ++j) 
+        for(uint j = 0; j < image->width; ++j)
         {
             idPixel = i * step + j;
             idKernel = 0;
@@ -34,7 +34,7 @@ void medianFilter(Image* image)
                 {
                     idNeighbour = idPixel + ky + (kx * image->width);
                     kernel[idKernel++] = image->getDataAtPixel(idNeighbour);
-                } 
+                }
             }
             image->data[idPixel] = getMedianValue(kernel, idKernel);
         }

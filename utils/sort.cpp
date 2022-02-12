@@ -5,12 +5,6 @@
 #define PIX_SORT(a,b) { if ((a)>(b)) PIX_SWAP((a),(b)); }
 #define PIX_SWAP(a,b) { uchar temp=(a);(a)=(b);(b)=temp; }
 
-void swap(uchar *xp, uchar *yp)
-{
-    uchar temp = *xp;
-    *xp = *yp;
-    *yp = temp;
-}
 
 // Pour l'algo quickselect
 int partition(uchar arr[], int l, int r)
@@ -56,18 +50,24 @@ uchar kthSmallest(uchar arr[], int l, int r, int k)
     return 255;
 }
 
+void swap(uchar *xp, uchar *yp)
+{
+    uchar temp = *xp;
+    *xp = *yp;
+    *yp = temp;
+}
+
 void bubbleSort(uchar arr[], int n)
 {
-   int i, j;
-   for (i = 0; i < n-1; i++)      
-  {
-       // Last i elements are already in place   
-       for (j = 0; j < n-i-1; j++) 
-       {
-           if (arr[j] > arr[j+1])
-              swap(&arr[j], &arr[j+1]);
-       }
-  }
+    for (int i = 0; i < n-1; i++)
+    {
+        // Last i elements are already in place   
+        for (int j = 0; j < n-i-1; j++) 
+        {
+            if (arr[j] > arr[j+1])
+                swap(&arr[j], &arr[j+1]);
+        }
+    }
 }
 
 int ucharComparator(const void * first, const void * second) {

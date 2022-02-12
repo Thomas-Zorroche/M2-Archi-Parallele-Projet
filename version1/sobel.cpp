@@ -1,40 +1,37 @@
 #include "sobel.hpp"
 
-void sobel(Image* image) {
-    Image* G0 = copyImage(image);
-    Image* G90 = copyImage(image);
+void sobel(Image* dest, const float threshold) {
+    float* Gx = (float*) malloc(sizeof(float) * dest->width * dest->height);
+    float* Gy = (float*) malloc(sizeof(float) * dest->width * dest->height);
 
     // On applique les filtres
-
-    /* /!\ NE FONCTIONNE PAS, PERTE D'INFOS /!\ */
-
-    applyConv2D(G0, &sobel0);
-    applyConv2D(G90, &sobel90);
+    applyConv2D(dest, Gx, &sobel0);
+    applyConv2D(dest, Gy, &sobel90);
 
     // Norme du gradient
-    const Image* gradients[2] = {G0, G90};
-    normGradient(image, gradients, 2);
+    const float* gradients[2] = {Gx, Gy};
+    normGradient(dest, gradients, 2, threshold);
 
-    freeImage(G0);
-    freeImage(G90);
+    free(Gx);
+    free(Gy);
 }
 
-void normGradient(const Image* dest, const Image** gradients, const uint nbGradients) {
-    const int step = gradients[0]->width * gradients[0]->channels * sizeof(uchar);
-    int idPixel = 0;
+void normGradient(const Image* dest, const float** gradients, const uint nbGradients, const float threshold) {
+    const int step = dest->width * dest->channels * sizeof(uchar);
     float sumSquaredGradients = 0.f;
+    int idPixel = 0;
 
-    for(uint i = 0; i < gradients[0]->height; ++i) {
-        for(uint j = 0; j < gradients[0]->width; ++j) {
+    for(uint i = 0; i < dest->height; ++i) {
+        for(uint j = 0; j < dest->width; ++j) {
             idPixel = i * step + j;
 
             // Calcul du carré du gradient pour le pixel
             sumSquaredGradients = 0.f;
             for(uint g = 0; g < nbGradients; ++g) {
-                sumSquaredGradients += pow(gradients[g]->data[idPixel], 2);
+                sumSquaredGradients += pow(gradients[g][idPixel], 2);
             }
             
-            dest->data[idPixel] = (uchar) clampf(sqrt(sumSquaredGradients));
+            dest->data[idPixel] = (uchar) clampfs(sqrt(sumSquaredGradients), threshold);
         }
     }
 }

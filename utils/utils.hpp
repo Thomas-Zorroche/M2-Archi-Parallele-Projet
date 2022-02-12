@@ -13,6 +13,7 @@
 #include "chrono.hpp"
 
 static const uint NUM_THREADS = omp_get_max_threads();
+static const float THRESHOLD = 95.f;
 
 typedef struct Image {
     uchar* data;    // Données de l'image

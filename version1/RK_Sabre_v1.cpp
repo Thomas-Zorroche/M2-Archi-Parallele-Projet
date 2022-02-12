@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
 	cvMoveWindow("Image_OUT_Window", 0, 700);
 
 	// Première acquisition
-	Image_IN = cvQueryFrame(capture); 
+	Image_IN = cvQueryFrame(capture);
 
 	// Création de l'image de sortie
 	Image_OUT = cvCreateImage(cvSize(Image_IN->width, Image_IN->height),  IPL_DEPTH_8U, 1);
@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
 		medianFilter(&outputImage);
 
 		// Apply Sobel Filter
-		sobel(&outputImage);
+		sobel(&outputImage, THRESHOLD);
 
 		// On affiche l'Image_IN dans une fenêtre
 		cvShowImage("Image_IN_Window", Image_IN);
@@ -121,9 +121,11 @@ int main(int argc, char* argv[])
 		// On attend 5ms
 		ESC_keyboard = cvWaitKey(5);
 
-		printf("%d\n", framesCounter);
 		// Mise à jour du compteur de frames (sauf si 0 est sélectionné)
-		if(!(numberOfFrames == 0)) framesCounter++;
+		if(!(numberOfFrames == 0)) {
+			// printf("%d\n", framesCounter);
+			framesCounter++;
+		}
     }
 	chrono.stop();
 	chrono.printElapsedSeconds();

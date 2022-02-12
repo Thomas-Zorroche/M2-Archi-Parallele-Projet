@@ -3,5 +3,5 @@
 #include "../utils/utils.hpp"
 #include "convolution.hpp"
 
-void sobel(Image* image);
-void normGradient(const Image* dest, const Image** gradients, const uint nbGradients);
+void sobel(Image* dest, const float threshold);
+void normGradient(const Image* dest, const float** gradients, const uint nbGradients, const float threshold);
