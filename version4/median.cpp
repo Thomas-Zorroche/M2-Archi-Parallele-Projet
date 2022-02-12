@@ -5,7 +5,7 @@ void medianFilter(Image* dest)
     Image* copy = copyImage(dest);
     uchar* kernel;
     
-    int size = dest->height * dest->width;
+    uint size = dest->height * dest->width;
     uint size_per_thread = size / NUM_THREADS;
     int id, idPixel;
 
@@ -15,9 +15,8 @@ void medianFilter(Image* dest)
         kernel = (uchar*) malloc(sizeof(uchar) * 3 * 3); // Each thread has its own kernel
         idPixel = (size_per_thread * id);
         
-        // Je ne sais pas pourquoi il faut parcourir sur 2 * size_per_thread, mais ça fonctionne ...
         #pragma omp for
-        for(uint i = 0; i < 2 * size_per_thread; ++i)
+        for(uint i = 0; i < size; ++i)
         {
             kernel[0] = copy->getDataAtPixel(idPixel);
             kernel[1] = copy->getDataAtPixel(idPixel + 1);

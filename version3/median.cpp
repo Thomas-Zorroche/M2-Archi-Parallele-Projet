@@ -15,7 +15,6 @@ void medianFilter(Image* dest)
         kernel = (uchar*) malloc(sizeof(uchar) * 3 * 3); // Each thread has its own kernel
         idPixel = (size_per_thread * id);
         
-        // Je ne sais pas pourquoi il faut parcourir sur size et pas size_per_threads, mais ça fonctionne ...
         #pragma omp for
         for(uint i = 0; i < size; ++i)
         {
