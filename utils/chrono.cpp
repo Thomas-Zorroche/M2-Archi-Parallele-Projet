@@ -1,24 +1,24 @@
 #include "chrono.hpp"
 
 void Chrono::start() {
-    begin = clock();
+    begin = omp_get_wtime();
 }
 
 void Chrono::stop() {
-    end = clock();
-    times += (double)(end - begin) / (double)clocksPerSecond * 1000.0;
+    end = omp_get_wtime();
+    times += end - begin;
     nbTimes++;
 }
 
 // Affiche le temps écoulé en ms
 void Chrono::printElapsedMSeconds() {
-    double elapsedTime = (double)(end - begin) / (double)clocksPerSecond * 1000.0;
+    double elapsedTime = end - begin / 1000.0;
     printf("Elapsed time: %f ms\n", elapsedTime);
 }
 
 // Affiche le temps écoulé en s
 void Chrono::printElapsedSeconds() {
-    double elapsedTime = (double)(end - begin) / (double)clocksPerSecond;
+    double elapsedTime = end - begin;
     printf("Elapsed time: %f s\n", elapsedTime);
 }
 

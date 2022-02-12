@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 	IplImage *Image_OUT;
 
 	// Outils pour la mesure des temps
-	Chrono chrono(NUM_THREADS);
+	Chrono chrono;
 		
 	// Capture vidéo
 	CvCapture *capture;
