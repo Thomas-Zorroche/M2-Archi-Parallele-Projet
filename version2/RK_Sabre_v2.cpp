@@ -10,7 +10,7 @@
 // adapter la ligne :
 //     capture = cvCreateCameraCapture( 4 );
 //
-// Compilation : g++ `pkg-config opencv --cflags` ./RK_Sabre.cpp ./src/utils.cpp ./src/sobel.cpp ./src/median.cpp ./src/chrono.cpp -o RK_Projet `pkg-config opencv --libs -std=c++14`
+// Compilation : g++ `pkg-config opencv --cflags` convolution.cpp median.cpp sobel.cpp ../utils/chrono.cpp ../utils/sort.cpp ../utils/utils.cpp RK_Sabre_v2.cpp -o RK_Projet `pkg-config opencv --libs` -std=c++14
 
 /*
  * Code written by Vinz (GeckoGeek.fr) 14/03/2010
