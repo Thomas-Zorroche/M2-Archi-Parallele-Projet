@@ -2,14 +2,23 @@
 
  // Conversion RGB en niveau de gris
 void getGrayScaleImage(const Image* imageIn, Image* imageOut) {
-    const int chs = imageIn->channels;
-    const int stepImageIn = imageIn->width * chs * sizeof(uchar);
-    const int stepImageOut = imageOut->width * imageOut->channels * sizeof(uchar);
+    uint sizeIn = imageIn->width * imageIn->height * imageIn->channels;
+    uint sizeOut = imageOut->width * imageOut->height;
+    uint size_per_thread_in = sizeIn / NUM_THREADS;
+    uint size_per_thread_out = sizeOut / NUM_THREADS;
+    uint id, idPixelIn, idPixelOut;
 
-    for(uint i = 0; i < imageIn->height; ++i) {
-        for(uint j = 0; j < imageIn->width; ++j) {
-            const int idPixel = i * stepImageIn + j * chs;
-            imageOut->data[i * stepImageOut + j] = 0.114 * imageIn->data[idPixel + 0] + 0.587 * imageIn->data[idPixel + 1] + 0.299 * imageIn->data[idPixel + 2];
+    #pragma omp parallel shared(sizeOut, size_per_thread_in, size_per_thread_out, imageIn, imageOut) private(id, idPixelIn, idPixelOut)
+    {
+        id = omp_get_thread_num();
+        idPixelIn = (size_per_thread_in * id);
+        idPixelOut = (size_per_thread_out * id);
+
+        #pragma omp for
+        for(uint i = 0; i < sizeOut; ++i) {
+            imageOut->data[idPixelOut] = 0.114 * imageIn->data[idPixelIn] + 0.587 * imageIn->data[idPixelIn + 1] + 0.299 * imageIn->data[idPixelIn + 2];
+            idPixelOut++;
+            idPixelIn += 3;
         }
     }
 }
