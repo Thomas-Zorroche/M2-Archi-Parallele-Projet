@@ -10,7 +10,7 @@
 // adapter la ligne :
 //     capture = cvCreateCameraCapture( 4 );
 //
-// Compilation : g++ `pkg-config opencv --cflags` convolution.cpp median.cpp sobel.cpp ../utils/chrono.cpp ../utils/sort.cpp ../utils/utils.cpp RK_Sabre_v2.cpp -o RK_Projet `pkg-config opencv --libs` -std=c++14
+// Compilation : g++ `pkg-config opencv --cflags` convolution.cpp median.cpp sobel.cpp ../utils/chrono.cpp ../utils/sort.cpp ../utils/utils.cpp RK_Sabre.cpp -o RK_Projet `pkg-config opencv --libs` -std=c++14 -fopenmp -pg
 
 /*
  * Code written by Vinz (GeckoGeek.fr) 14/03/2010
@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
 	cvMoveWindow("Image_OUT_Window", 0, 700);
 
 	// Première acquisition
-	Image_IN = cvQueryFrame(capture); 
+	Image_IN = cvQueryFrame(capture);
 
 	// Création de l'image de sortie
 	Image_OUT = cvCreateImage(cvSize(Image_IN->width, Image_IN->height),  IPL_DEPTH_8U, 1);

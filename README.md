@@ -6,6 +6,6 @@
 * Puis : `make -j`
 
 Si CMake n'est pas disponible, voici la ligne de compilation à entrer :
-``g++ `pkg-config opencv --cflags` convolution.cpp median.cpp sobel.cpp ../utils/chrono.cpp ../utils/sort.cpp ../utils/utils.cpp RK_Sabre_vX.cpp -o RK_Projet `pkg-config opencv --libs` -std=c++14``
+``g++ `pkg-config opencv --cflags` convolution.cpp median.cpp sobel.cpp ../utils/chrono.cpp ../utils/sort.cpp ../utils/utils.cpp RK_Sabre.cpp -o RK_Projet `pkg-config opencv --libs` -std=c++14 -fopenmp -pg``
 ## Run le projet
 * Enter : `./RK_Projet -c <id of camera (uint)> -f <number of frames, 0 = infinity (uint)>`

@@ -10,7 +10,7 @@
 // adapter la ligne :
 //     capture = cvCreateCameraCapture( 4 );
 //
-// Compilation : g++ `pkg-config opencv --cflags` convolution.cpp median.cpp sobel.cpp ../utils/chrono.cpp ../utils/sort.cpp ../utils/utils.cpp RK_Sabre_v1.cpp -o RK_Projet `pkg-config opencv --libs` -std=c++14
+// Compilation : g++ `pkg-config opencv --cflags` convolution.cpp median.cpp sobel.cpp ../utils/chrono.cpp ../utils/sort.cpp ../utils/utils.cpp RK_Sabre.cpp -o RK_Projet `pkg-config opencv --libs` -std=c++14 -fopenmp -pg
 
 /*
  * Code written by Vinz (GeckoGeek.fr) 14/03/2010
@@ -86,13 +86,17 @@ int main(int argc, char* argv[])
 	cvMoveWindow("Image_OUT_Window", 0, 700);
 
 	// Première acquisition
-	Image_IN = cvQueryFrame(capture);
+	Image_IN = cvQueryFrame(capture); 
 
 	// Création de l'image de sortie
 	Image_OUT = cvCreateImage(cvSize(Image_IN->width, Image_IN->height),  IPL_DEPTH_8U, 1);
 
 	Image inputImage 	= {nullptr, (uint)Image_IN->height, (uint)Image_IN->width, Image_IN->nChannels};
 	Image outputImage 	= {nullptr, (uint)Image_OUT->height, (uint)Image_OUT->width, Image_OUT->nChannels};
+
+	// On définit le nombre de threads à utiliser pour les parallélisations
+	omp_set_num_threads(NUM_THREADS);
+	printf("Threads used: %d\n", NUM_THREADS);
 
 	// Boucle tant que l'utilisateur n'appuie pas sur la touche q (ou Q)
 	chrono.start();
@@ -124,7 +128,7 @@ int main(int argc, char* argv[])
 
 		// Mise à jour du compteur de frames (sauf si 0 est sélectionné)
 		if(!(numberOfFrames == 0)) {
-			// printf("%d\n", framesCounter);
+			// printf("Frame n°%d\n", framesCounter);
 			framesCounter++;
 		}
     }
