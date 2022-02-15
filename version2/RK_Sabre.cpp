@@ -94,6 +94,10 @@ int main(int argc, char* argv[])
 	Image inputImage 	= {nullptr, (uint)Image_IN->height, (uint)Image_IN->width, Image_IN->nChannels};
 	Image outputImage 	= {nullptr, (uint)Image_OUT->height, (uint)Image_OUT->width, Image_OUT->nChannels};
 
+	// On définit le nombre de threads à utiliser pour les parallélisations
+	omp_set_num_threads(NUM_THREADS);
+	printf("Threads used: %d\n", NUM_THREADS);
+
 	// Boucle tant que l'utilisateur n'appuie pas sur la touche q (ou Q)
 	chrono.start();
 	printf("START Chrono\n");
