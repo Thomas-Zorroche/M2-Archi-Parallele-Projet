@@ -1,7 +1,7 @@
 # M2-Archi-Parallele-Projet
 ## Build le projet
 * Créer un dossier `build/`, entrer dans ce dossier
-* Créer un dossier par version : `mkdir version1 && mkdir version2 && mkdir version3 && mkdir version4`
+* Créer un dossier par version : `mkdir version1 && mkdir version2 && mkdir version3 && mkdir version4 && mkdir version5`
 * Aller dans un des dossiers et enter : `cmake ../../versionX`, avec X = la version
 * Puis : `make -j`
 
